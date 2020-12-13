@@ -1,6 +1,7 @@
 
 package gui;
 
+import java.io.IOException;
 import java.lang.System.Logger;
 import java.util.ArrayList;
 import javax.swing.JOptionPane;
@@ -204,9 +205,13 @@ public class JFrameMainWindow extends javax.swing.JFrame {
             diskSize = Integer.parseInt(JOptionPane.showInputDialog("Please enter number of bytes for the virtual disk", 4098));
             sectorSize = Integer.parseInt(JOptionPane.showInputDialog("Please enter number of bytes for the virtual disk", 8));
 
-            driveManager = new DriveManager(new ArrayList<>(diskSize), sectorSize);
+            this.driveManager = new DriveManager(diskSize, sectorSize);
+            
+            this.jTextFieldCurrentDirectory.setText("\\");
         } catch (NumberFormatException ex){
             java.util.logging.Logger.getLogger(JFrameMainWindow.class.getName()).log(java.util.logging.Level.WARNING, "Number couldn't be parsed", ex);
+        } catch (IOException ex){
+            java.util.logging.Logger.getLogger(JFrameMainWindow.class.getName()).log(java.util.logging.Level.WARNING, "Drive couldn't be created, please check directory", ex);
         }
     }//GEN-LAST:event_jMenuItemCreateVirtualDiskActionPerformed
 
