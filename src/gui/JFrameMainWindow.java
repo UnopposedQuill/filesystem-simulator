@@ -3,7 +3,12 @@ package gui;
 
 import java.io.IOException;
 import javax.swing.JOptionPane;
+import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.DefaultTreeModel;
+import model.DirectoryNode;
 import model.DriveManager;
+import model.FileNode;
+import model.FileSystemNode;
 
 /**
  *
@@ -54,6 +59,8 @@ public class JFrameMainWindow extends javax.swing.JFrame {
 
         jTextFieldCurrentDirectory.setText("Disco no inicializado");
 
+        javax.swing.tree.DefaultMutableTreeNode treeNode1 = new javax.swing.tree.DefaultMutableTreeNode("root");
+        jTreeDirectoryTree.setModel(new javax.swing.tree.DefaultTreeModel(treeNode1));
         jScrollPane1.setViewportView(jTreeDirectoryTree);
 
         jTableFileContents.setModel(new javax.swing.table.DefaultTableModel(
@@ -211,6 +218,7 @@ public class JFrameMainWindow extends javax.swing.JFrame {
             this.driveManager = new DriveManager(diskSize, sectorSize);
             
             this.jTextFieldCurrentDirectory.setText("/");
+            this.updateTree();
         } catch (NumberFormatException ex){
             java.util.logging.Logger.getLogger(JFrameMainWindow.class.getName()).log(java.util.logging.Level.WARNING, "Number couldn't be parsed", ex);
         } catch (IOException ex){
@@ -224,6 +232,7 @@ public class JFrameMainWindow extends javax.swing.JFrame {
             JOptionPane.showMessageDialog(null, "Please first create a virtual drive");
         } else {
             driveManager.createFile();
+            this.updateTree();
         }
     }//GEN-LAST:event_jMenuItemCreateFileActionPerformed
 
@@ -243,6 +252,7 @@ public class JFrameMainWindow extends javax.swing.JFrame {
                 if (!name.equals("")) {
                     driveManager.makeDirectory((String)name);
                     System.out.println("New Directory created");
+                    this.updateTree();
                 }
                 
             }
@@ -287,11 +297,65 @@ public class JFrameMainWindow extends javax.swing.JFrame {
         //</editor-fold>
 
         /* Create and display the form */
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                new JFrameMainWindow().setVisible(true);
-            }
+        java.awt.EventQueue.invokeLater(() -> {
+            new JFrameMainWindow().setVisible(true);
         });
+    }
+    
+    /**
+     * This function will update the tree view to the current state of the program
+     */
+    public void updateTree(){
+        
+        /*
+        I need a new DefaultTreeModel to supply the treeView with
+        Note the "true", these are to signal the tree so it differentiates
+        between nodes with childs and nodes without childs
+        */
+        DefaultTreeModel dtmDirectory = new DefaultTreeModel(new DefaultMutableTreeNode("Root", true), true);
+        
+        DirectoryNode fileSystemRootNode = this.driveManager.getRootDirectory();
+        DefaultMutableTreeNode treeRootNode = new DefaultMutableTreeNode("Root", true);
+        
+        fileSystemRootNode.getChildren().forEach(fileSystemNode -> {
+            treeRootNode.add(getTreeNode(fileSystemNode));
+        });
+        
+        //Add the root to the tree view
+        dtmDirectory.setRoot(treeRootNode);
+        
+        //Finally set the new model
+        this.jTreeDirectoryTree.setModel(dtmDirectory);
+    }
+    
+    /**
+     * This function will return a Default Mutable Tree Node that stores the
+     * representation of it and its childs
+     * @param node The node which will be transformed into a DMTN
+     * @return A jTree compatible node representing the original node
+     */
+    public DefaultMutableTreeNode getTreeNode(FileSystemNode node){
+        //In case of errors
+        if (node == null) {
+            return null;
+        }
+        
+        //Now I need to check if it's a file, or a directory node
+        if (node instanceof FileNode) {
+            FileNode fileNode = (FileNode) node;
+            return new DefaultMutableTreeNode(fileNode.getName() + "." + fileNode.getExtension(), false);
+        }
+        
+        //It's a directory, need to go through each node
+        DefaultMutableTreeNode currentTreeNode = new DefaultMutableTreeNode(node.getName());
+        
+        //Time to populate it
+        ((DirectoryNode)node).getChildren().forEach(fileSystemNode -> {
+            currentTreeNode.add(getTreeNode(fileSystemNode));
+        });
+        
+        //Return the populated node
+        return currentTreeNode;
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

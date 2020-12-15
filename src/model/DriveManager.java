@@ -111,6 +111,14 @@ public class DriveManager {
         return currentDirectory;
     }
     
+    /**
+     * Returns an instance of DirectoryNode representing the root node
+     * @return An instance containing the information of the root directory
+     */
+    public DirectoryNode getRootDirectory() {
+        return rootNode;
+    }
+    
     public void createFile(){
         
     }
