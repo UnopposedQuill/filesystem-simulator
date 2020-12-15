@@ -1,14 +1,13 @@
 package model;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 /**
  * This will take care of representing the directories
  * @author darkl
  */
 public class DirectoryNode extends FileSystemNode{
-
-    private DirectoryNode parent;
     
     /**
      * This is so each can point to extra ones
@@ -24,23 +23,54 @@ public class DirectoryNode extends FileSystemNode{
     }
 
     public DirectoryNode(DirectoryNode parent, String name) {
-        super(name);
+        super(parent, name);
         this.children = new ArrayList<>();
-        this.parent = parent;
     }
 
     /**
      * This will output a representation of the directory of this directory node
      * @return A string separated by / representing the route of this directory
      */
-    @Override
-    public String toString() {
+    public String getRoute() {
         DirectoryNode ptr = this;
         String directoryRoute = "/";
         while (ptr != null){
             directoryRoute = "/" + ptr.getName() + directoryRoute;
             ptr = ptr.parent;
         }
-        return directoryRoute.substring(1);
+        return directoryRoute;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 29 * hash + Objects.hashCode(this.getRoute());
+        return hash;
+    }
+
+    /**
+     * Will evaluate if two objects are equal. Two elements will be equal
+     * should their route be the same
+     * @param obj Object to which this will be compared
+     * @return True if the object is equal to this
+     */
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final DirectoryNode other = (DirectoryNode) obj;
+        return Objects.equals(this.getRoute(), other.getRoute());
+    }
+
+    @Override
+    public String toString() {
+        return this.getName();
     }
 }

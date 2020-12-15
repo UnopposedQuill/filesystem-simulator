@@ -2,9 +2,13 @@
 package gui;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
 import javax.swing.JOptionPane;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
+import javax.swing.tree.TreeNode;
+import javax.swing.tree.TreePath;
 import model.DirectoryNode;
 import model.DriveManager;
 import model.FileNode;
@@ -232,7 +236,11 @@ public class JFrameMainWindow extends javax.swing.JFrame {
             JOptionPane.showMessageDialog(null, "Please first create a virtual drive");
         } else {
             driveManager.createFile();
+
+            //Now I need to update the tree to change accordingly
             this.updateTree();
+            this.focusNode((DefaultMutableTreeNode)this.jTreeDirectoryTree.getModel().getRoot(),
+                    new DefaultMutableTreeNode(this.driveManager.getCurrentDirectory()));
         }
     }//GEN-LAST:event_jMenuItemCreateFileActionPerformed
 
@@ -252,7 +260,11 @@ public class JFrameMainWindow extends javax.swing.JFrame {
                 if (!name.equals("")) {
                     driveManager.makeDirectory((String)name);
                     System.out.println("New Directory created");
+                    
+                    //Now I need to update the tree to change accordingly
                     this.updateTree();
+                    this.focusNode((DefaultMutableTreeNode)this.jTreeDirectoryTree.getModel().getRoot(),
+                            new DefaultMutableTreeNode(this.driveManager.getCurrentDirectory()));
                 }
                 
             }
@@ -266,7 +278,12 @@ public class JFrameMainWindow extends javax.swing.JFrame {
     private void jButtonGoDirectoryActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonGoDirectoryActionPerformed
         if (this.driveManager.changeDirectory(this.jTextFieldCurrentDirectory.getText())) {
             //Directory change successfull
-            this.jTextFieldCurrentDirectory.setText(this.driveManager.getCurrentDirectory().toString());
+            this.jTextFieldCurrentDirectory.setText(this.driveManager.getCurrentDirectory().getRoute());
+            
+            //Now I need to update the tree to change accordingly
+            this.focusNode((DefaultMutableTreeNode)this.jTreeDirectoryTree.getModel().getRoot(),
+                    new DefaultMutableTreeNode(this.driveManager.getCurrentDirectory()));
+            
         } else {
             //Error
             JOptionPane.showMessageDialog(null, "Couldn't change to directory");
@@ -312,17 +329,15 @@ public class JFrameMainWindow extends javax.swing.JFrame {
         Note the "true", these are to signal the tree so it differentiates
         between nodes with childs and nodes without childs
         */
-        DefaultTreeModel dtmDirectory = new DefaultTreeModel(new DefaultMutableTreeNode("Root", true), true);
+        DefaultMutableTreeNode treeRootNode = new DefaultMutableTreeNode(this.driveManager.getRootDirectory(), true);
         
-        DirectoryNode fileSystemRootNode = this.driveManager.getRootDirectory();
-        DefaultMutableTreeNode treeRootNode = new DefaultMutableTreeNode("Root", true);
-        
-        fileSystemRootNode.getChildren().forEach(fileSystemNode -> {
+        //For each of its children, call the auxiliar recursive function
+        this.driveManager.getRootDirectory().getChildren().forEach(fileSystemNode -> {
             treeRootNode.add(getTreeNode(fileSystemNode));
         });
         
-        //Add the root to the tree view
-        dtmDirectory.setRoot(treeRootNode);
+        //Create a new Tree model based on the root
+        DefaultTreeModel dtmDirectory = new DefaultTreeModel(treeRootNode, true);
         
         //Finally set the new model
         this.jTreeDirectoryTree.setModel(dtmDirectory);
@@ -342,12 +357,11 @@ public class JFrameMainWindow extends javax.swing.JFrame {
         
         //Now I need to check if it's a file, or a directory node
         if (node instanceof FileNode) {
-            FileNode fileNode = (FileNode) node;
-            return new DefaultMutableTreeNode(fileNode.getName() + "." + fileNode.getExtension(), false);
+            return new DefaultMutableTreeNode((FileNode)node, false);
         }
         
         //It's a directory, need to go through each node
-        DefaultMutableTreeNode currentTreeNode = new DefaultMutableTreeNode(node.getName());
+        DefaultMutableTreeNode currentTreeNode = new DefaultMutableTreeNode(node, true);
         
         //Time to populate it
         ((DirectoryNode)node).getChildren().forEach(fileSystemNode -> {
@@ -356,6 +370,27 @@ public class JFrameMainWindow extends javax.swing.JFrame {
         
         //Return the populated node
         return currentTreeNode;
+    }
+    
+    public void focusNode(DefaultMutableTreeNode node, DefaultMutableTreeNode nodeToFocus){
+        //I can only expand or collapse directories
+        if (node.getUserObject() instanceof DirectoryNode) {
+            //It's a directory, do a call for each subsequential child
+            Collections.list(node.children()).forEach(treeNode -> {
+                focusNode((DefaultMutableTreeNode) treeNode, nodeToFocus);
+            });
+            
+            if (node.isRoot()) return;
+            
+            TreePath nodePath = new TreePath(node.getPath());
+            
+            //I'll check if it's the same to nodeToFocus            
+            if (node.getUserObject().equals(nodeToFocus.getUserObject())) {
+                this.jTreeDirectoryTree.expandPath(nodePath);
+            } else {
+                this.jTreeDirectoryTree.collapsePath(nodePath);
+            }
+        }
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

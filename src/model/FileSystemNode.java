@@ -17,10 +17,19 @@ public abstract class FileSystemNode {
      */
     private String name;
     
+    /**
+     * Both initial creation and then last modification date
+     * First cannot change
+     */
     private final Date creationDate;
     private Date modificationDate;
+    
+    /**
+     * Parent node to this element
+     */
+    protected DirectoryNode parent;
 
-    public FileSystemNode(String name) {
+    public FileSystemNode(DirectoryNode parent, String name) {
         this.name = name;
         this.creationDate = this.modificationDate = GregorianCalendar.getInstance().getTime();
     }
@@ -45,5 +54,11 @@ public abstract class FileSystemNode {
         return creationDate;
     }
     
-    
+    /**
+     * Every subclass is required to implement this method in
+     * order to add the node into the tree itself
+     * @return A string representing the node
+     */
+    @Override
+    public abstract String toString();
 }

@@ -48,7 +48,7 @@ public class DriveManager {
         }
         
         //Now that the drive is done, I prepare the file system
-        this.rootNode = new DirectoryNode(null, "");
+        this.rootNode = new DirectoryNode(null, "root");
         this.currentDirectory = this.rootNode;
     }
     
