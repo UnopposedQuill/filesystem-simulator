@@ -2,8 +2,6 @@
 package gui;
 
 import java.io.IOException;
-import java.lang.System.Logger;
-import java.util.ArrayList;
 import javax.swing.JOptionPane;
 import model.DriveManager;
 
@@ -33,7 +31,7 @@ public class JFrameMainWindow extends javax.swing.JFrame {
 
         jTextFieldCurrentDirectory = new javax.swing.JTextField();
         jScrollPane1 = new javax.swing.JScrollPane();
-        jTree1 = new javax.swing.JTree();
+        jTreeDirectoryTree = new javax.swing.JTree();
         jScrollPane2 = new javax.swing.JScrollPane();
         jTableFileContents = new javax.swing.JTable();
         jScrollPane3 = new javax.swing.JScrollPane();
@@ -54,9 +52,9 @@ public class JFrameMainWindow extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-        jTextFieldCurrentDirectory.setText("jTextField1");
+        jTextFieldCurrentDirectory.setText("Disco no inicializado");
 
-        jScrollPane1.setViewportView(jTree1);
+        jScrollPane1.setViewportView(jTreeDirectoryTree);
 
         jTableFileContents.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -98,6 +96,11 @@ public class JFrameMainWindow extends javax.swing.JFrame {
         jScrollPane3.setViewportView(jTableVirtualDriveContents);
 
         jButtonGoDirectory.setText("Go");
+        jButtonGoDirectory.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonGoDirectoryActionPerformed(evt);
+            }
+        });
 
         jMenu1.setText("File");
 
@@ -207,7 +210,7 @@ public class JFrameMainWindow extends javax.swing.JFrame {
 
             this.driveManager = new DriveManager(diskSize, sectorSize);
             
-            this.jTextFieldCurrentDirectory.setText("\\");
+            this.jTextFieldCurrentDirectory.setText("/");
         } catch (NumberFormatException ex){
             java.util.logging.Logger.getLogger(JFrameMainWindow.class.getName()).log(java.util.logging.Level.WARNING, "Number couldn't be parsed", ex);
         } catch (IOException ex){
@@ -229,13 +232,36 @@ public class JFrameMainWindow extends javax.swing.JFrame {
         if (driveManager == null) {
             JOptionPane.showMessageDialog(null, "Please first create a virtual drive");
         } else {
-            driveManager.makeDirectory();
+            
+            //Time to ask for the new directory name
+            Object name = JOptionPane.showInputDialog("Please enter the directory name", "New Folder");
+            
+            //Check for cancelation
+            if (!name.equals(JOptionPane.CANCEL_OPTION)){
+                
+                //Check for valid name
+                if (!name.equals("")) {
+                    driveManager.makeDirectory((String)name);
+                    System.out.println("New Directory created");
+                }
+                
+            }
         }
     }//GEN-LAST:event_jMenuItemCreateDirectoryActionPerformed
 
     private void jMenuItemFindActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItemFindActionPerformed
         System.out.println("Find");
     }//GEN-LAST:event_jMenuItemFindActionPerformed
+
+    private void jButtonGoDirectoryActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonGoDirectoryActionPerformed
+        if (this.driveManager.changeDirectory(this.jTextFieldCurrentDirectory.getText())) {
+            //Directory change successfull
+            this.jTextFieldCurrentDirectory.setText(this.driveManager.getCurrentDirectory().toString());
+        } else {
+            //Error
+            JOptionPane.showMessageDialog(null, "Couldn't change to directory");
+        }
+    }//GEN-LAST:event_jButtonGoDirectoryActionPerformed
 
     /**
      * @param args the command line arguments
@@ -288,6 +314,6 @@ public class JFrameMainWindow extends javax.swing.JFrame {
     private javax.swing.JTable jTableFileContents;
     private javax.swing.JTable jTableVirtualDriveContents;
     private javax.swing.JTextField jTextFieldCurrentDirectory;
-    private javax.swing.JTree jTree1;
+    private javax.swing.JTree jTreeDirectoryTree;
     // End of variables declaration//GEN-END:variables
 }

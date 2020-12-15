@@ -26,4 +26,5 @@ hs_err_pid*
 /build/
 /dist/
 
+# virtual drive data
 drive.dat
