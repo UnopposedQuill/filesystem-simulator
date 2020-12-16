@@ -152,10 +152,10 @@ public class DriveManager {
         this.ocuppiedSectors[fileSector.getSectorPointer()/sectorSize] = false;
     }
     
-    private void copyArrayContents(char[] destination, char[] source, int offset, int amount){
+    private static void copyArrayContents(char[] destination, int destOffset, char[] source, int sourceOffset, int amount){
         int initialPosition = 0;
         while(amount-- > 0){
-            destination[initialPosition++] = source[offset++];
+            destination[(initialPosition++) + destOffset] = source[sourceOffset++];
         }
     }
     
@@ -209,5 +209,38 @@ public class DriveManager {
         } 
         
         return contents;
+    }
+    
+    /**
+     * This will take care of overwritting the previous data using the new data
+     * @param fileNode The node whose data will be overwritten
+     * @param data The data which will be saved on top of the previous one
+     */
+    public void saveData(FileNode fileNode, char[] data){
+        FileSector pointer = fileNode.getBegin();
+        //I will use the min here, but it should be the same
+        int amountToSave = Math.min(data.length, fileNode.getSize()),
+                counter = 0;
+        
+        //While I'm missing some characters to save
+        while(counter < amountToSave){
+            
+            //First I need to check if the contents fit exactly in the sector
+            if (counter * this.sectorSize + this.sectorSize < amountToSave) {
+                DriveManager.copyArrayContents(this.diskContents, pointer.getSectorPointer(), data, counter * this.sectorSize, this.sectorSize);
+                counter += this.sectorSize;
+            } else {
+                throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+            }
+        }
+    }
+
+    /**
+     * This will return an array representing the data of the current contents
+     * It is linked to the actual contents
+     * @return An array pointer to the current diskContents
+     */
+    public char[] getContent() {
+        return this.diskContents;
     }
 }

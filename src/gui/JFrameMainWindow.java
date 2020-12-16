@@ -22,7 +22,7 @@ public class JFrameMainWindow extends javax.swing.JFrame {
 
     private DriveManager driveManager = null;
     
-    private int fileEditorColumnCount;
+    private final int fileEditorColumnCount, diskContentsColumnCount;
     
     /**
      * Creates new form JFrameMainWindow
@@ -30,6 +30,7 @@ public class JFrameMainWindow extends javax.swing.JFrame {
     public JFrameMainWindow() {
         initComponents();
         this.fileEditorColumnCount = this.jTableFileContents.getColumnCount();
+        this.diskContentsColumnCount = this.jTableVirtualDriveContents.getColumnCount();
     }
 
     /**
@@ -92,7 +93,6 @@ public class JFrameMainWindow extends javax.swing.JFrame {
 
         jTableFileContents.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                { new Byte((byte) 0),  new Byte((byte) 1),  new Byte((byte) 2),  new Byte((byte) 3), null, null, null, null, null, null},
                 {null, null, null, null, null, null, null, null, null, null},
                 {null, null, null, null, null, null, null, null, null, null},
                 {null, null, null, null, null, null, null, null, null, null},
@@ -111,14 +111,12 @@ public class JFrameMainWindow extends javax.swing.JFrame {
             }
         });
         jTableFileContents.setShowGrid(true);
-        jTableFileContents.setTableHeader(null);
         jScrollPane2.setViewportView(jTableFileContents);
 
         jScrollPane3.setVerticalScrollBarPolicy(javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
 
         jTableVirtualDriveContents.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {"1", "127", "-128", "100", null, null, null, null, null, null},
                 {null, null, null, null, null, null, null, null, null, null},
                 {null, null, null, null, null, null, null, null, null, null},
                 {null, null, null, null, null, null, null, null, null, null}
@@ -128,7 +126,6 @@ public class JFrameMainWindow extends javax.swing.JFrame {
             }
         ));
         jTableVirtualDriveContents.setShowGrid(true);
-        jTableVirtualDriveContents.setTableHeader(null);
         jScrollPane3.setViewportView(jTableVirtualDriveContents);
 
         jButtonGoDirectory.setText("Go");
@@ -139,8 +136,18 @@ public class JFrameMainWindow extends javax.swing.JFrame {
         });
 
         jButtonSaveChanges.setText("Save");
+        jButtonSaveChanges.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonSaveChangesActionPerformed(evt);
+            }
+        });
 
         jButtonDiscard.setText("Discard");
+        jButtonDiscard.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonDiscardActionPerformed(evt);
+            }
+        });
 
         jLabelNodeName.setHorizontalAlignment(javax.swing.SwingConstants.TRAILING);
         jLabelNodeName.setText("<No File Selected>");
@@ -402,58 +409,60 @@ public class JFrameMainWindow extends javax.swing.JFrame {
         //There's a node selected
         FileSystemNode nodeInfo = (FileSystemNode)selectedNode.getUserObject();
 
-        /*
-        Now, I have to show it's info in the information panel, and the contents
-        should the selected node be a file
-        */
-        if (nodeInfo instanceof FileNode) {
-            FileNode fileNode = (FileNode) nodeInfo;
-            this.jLabelNodeName.setText("File: " + fileNode.getName());
-            this.jLabelFileSize.setText(String.valueOf(fileNode.getSize()) + " B");
-            this.jLabelCreationDate.setText(fileNode.getCreationDate().toString());
-            this.jLabelModificationDate.setText(fileNode.getModificationDate().toString());
-            
-            //Need to split the file information into the column count
-            char [] contents = this.driveManager.getData(fileNode);
-//            for (int i = 0; i < contents.length; i++) {
-//                System.out.print((int) contents[i]);
-//            }
-            
-            int rowCount = (int)Math.ceil((double)contents.length/this.fileEditorColumnCount);
-            Integer [][] data = new Integer[rowCount][this.fileEditorColumnCount];
-            for (int i = 0; i < contents.length; i++) {
-                data[i/this.fileEditorColumnCount][i%this.fileEditorColumnCount] = (int)contents[i];
-            }
-            
-            //Now that I have the data, I need the columns
-            String[] columnNames = new String[this.fileEditorColumnCount];
-            for (int i = 0; i < this.fileEditorColumnCount; i++) {
-                columnNames[i] = "Title " + String.valueOf(i + 1);
-            }
-
-            //Now I can build a model using the data
-            DefaultTableModel defaultTableModel = new DefaultTableModel(data, columnNames);
-            
-            //And finally set the model into the table
-            this.jTableFileContents.setModel(defaultTableModel);
-            
-        } else if (nodeInfo instanceof DirectoryNode) {
-            DirectoryNode directoryNode = (DirectoryNode) nodeInfo;
-            this.jLabelNodeName.setText("Directory: " + directoryNode.getName());
-            this.jLabelFileSize.setText(String.valueOf(directoryNode.getSize()) + " B");
-            this.jLabelCreationDate.setText(directoryNode.getCreationDate().toString());
-            this.jLabelModificationDate.setText(directoryNode.getModificationDate().toString());
-            
-            //Update the content table to an empty table
-            String[] columnNames = new String[this.fileEditorColumnCount];
-            for (int i = 0; i < this.fileEditorColumnCount; i++) {
-                columnNames[i] = "Title " + String.valueOf(i + 1);
-            }
-
-            this.jTableFileContents.setModel(new DefaultTableModel(new Object[0][0], columnNames));
-        }
-        
+        this.updateFileContents(nodeInfo);
     }//GEN-LAST:event_jTreeDirectoryTreeValueChanged
+
+    private void jButtonSaveChangesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonSaveChangesActionPerformed
+        DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode) 
+                this.jTreeDirectoryTree.getLastSelectedPathComponent();
+
+        //Selected node shouldn't have changed to null
+        if (selectedNode == null) return;
+
+        //There's a node selected
+        FileSystemNode nodeInfo = (FileSystemNode)selectedNode.getUserObject();
+
+        //I'm adding this if to prevent any awful errors
+        if (nodeInfo instanceof FileNode) {
+            try{
+                FileNode fileNode = (FileNode) nodeInfo;
+                char[] data = new char[fileNode.getSize()];
+
+                //For each byte in the file
+                for (int i = 0; i < fileNode.getSize(); i++) {
+                    
+                    //First get the cell value, then parse it to an int, the to a char
+                    int integerCellValue = (int)this.jTableFileContents.getModel().getValueAt(i/this.fileEditorColumnCount, i%this.fileEditorColumnCount);
+                    data[i] = (char)integerCellValue;
+                }
+
+                this.driveManager.saveData(fileNode, data);
+
+                //Add a confirmation message
+                JOptionPane.showMessageDialog(null, "Contents Saved");
+            } catch (ClassCastException ex){
+                JOptionPane.showMessageDialog(null, "Incompatible data in editor");
+                java.util.logging.Logger.getLogger(JFrameMainWindow.class.getName()).log(java.util.logging.Level.SEVERE, "Incompatible data in editor", ex);
+            } catch (NumberFormatException ex){
+                JOptionPane.showMessageDialog(null, "Couldn't parse numbers in editor");
+                java.util.logging.Logger.getLogger(JFrameMainWindow.class.getName()).log(java.util.logging.Level.SEVERE, "Couldn't parse numbers in editor", ex);
+            }
+        }
+    }//GEN-LAST:event_jButtonSaveChangesActionPerformed
+
+    private void jButtonDiscardActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonDiscardActionPerformed
+        //Redraw using the previous selected node
+        DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode) 
+                this.jTreeDirectoryTree.getLastSelectedPathComponent();
+
+        //Selected node shouldn't have changed to null
+        if (selectedNode == null) return;
+
+        //There's a node selected
+        FileSystemNode nodeInfo = (FileSystemNode)selectedNode.getUserObject();
+
+        this.updateFileContents(nodeInfo);
+    }//GEN-LAST:event_jButtonDiscardActionPerformed
 
     /**
      * @param args the command line arguments
@@ -556,6 +565,94 @@ public class JFrameMainWindow extends javax.swing.JFrame {
                 this.jTreeDirectoryTree.collapsePath(nodePath);
             }
         }
+    }
+    
+    /**
+     * This function will take care of updating the fileContents table editor
+     * to load the file or directory contents
+     * @param fileSystemNode The node from which the contents will be loaded from
+     */
+    public void updateFileContents(FileSystemNode fileSystemNode){
+        /*
+        Now, I have to show it's info in the information panel, and the contents
+        should the selected node be a file
+        */
+        if (fileSystemNode instanceof FileNode) {
+            FileNode fileNode = (FileNode) fileSystemNode;
+            this.jLabelNodeName.setText("File: " + fileNode.getName());
+            this.jLabelFileSize.setText(String.valueOf(fileNode.getSize()) + " B");
+            this.jLabelCreationDate.setText(fileNode.getCreationDate().toString());
+            this.jLabelModificationDate.setText(fileNode.getModificationDate().toString());
+            
+            //Need to split the file information into the column count
+            char [] contents = this.driveManager.getData(fileNode);
+            
+            int rowCount = (int)Math.ceil((double)contents.length/this.fileEditorColumnCount);
+            Integer [][] data = new Integer[rowCount][this.fileEditorColumnCount];
+            for (int i = 0; i < contents.length; i++) {
+                data[i/this.fileEditorColumnCount][i%this.fileEditorColumnCount] = (int)contents[i];
+            }
+            
+            //Now that I have the data, I need the columns
+            String[] columnNames = new String[this.fileEditorColumnCount];
+            for (int i = 0; i < this.fileEditorColumnCount; i++) {
+                columnNames[i] = "Title " + String.valueOf(i + 1);
+            }
+
+            //Now I can build a model using the data
+            DefaultTableModel defaultTableModel = new DefaultTableModel(data, columnNames);
+            
+            //Set the model into the table
+            this.jTableFileContents.setModel(defaultTableModel);
+            
+            //And enable the editing buttons
+            this.jButtonSaveChanges.setEnabled(true);
+            this.jButtonDiscard.setEnabled(true);
+            
+        } else if (fileSystemNode instanceof DirectoryNode) {
+            DirectoryNode directoryNode = (DirectoryNode) fileSystemNode;
+            this.jLabelNodeName.setText("Directory: " + directoryNode.getName());
+            this.jLabelFileSize.setText(String.valueOf(directoryNode.getSize()) + " B");
+            this.jLabelCreationDate.setText(directoryNode.getCreationDate().toString());
+            this.jLabelModificationDate.setText(directoryNode.getModificationDate().toString());
+            
+            //Update the content table to an empty table
+            String[] columnNames = new String[this.fileEditorColumnCount];
+            for (int i = 0; i < this.fileEditorColumnCount; i++) {
+                columnNames[i] = "Title " + String.valueOf(i + 1);
+            }
+
+            this.jTableFileContents.setModel(new DefaultTableModel(new Object[0][0], columnNames));
+            
+            //And disable the editing buttons
+            this.jButtonSaveChanges.setEnabled(false);
+            this.jButtonDiscard.setEnabled(false);
+        }
+    }
+    
+    /**
+     * This will sync the table so that the contents in it reflect the current diskStatus
+     */
+    public void updateDiskContents(){
+        //Need to split the file information into the column count
+            
+            int rowCount = (int)Math.ceil((double)this.driveManager.getContent().length/this.diskContentsColumnCount);
+            Integer [][] data = new Integer[rowCount][this.diskContentsColumnCount];
+            for (int i = 0; i < this.driveManager.getContent().length; i++) {
+                data[i/this.diskContentsColumnCount][i%this.diskContentsColumnCount] = (int)this.driveManager.getContent()[i];
+            }
+            
+            //Now that I have the data, I need the columns
+            String[] columnNames = new String[this.diskContentsColumnCount];
+            for (int i = 0; i < this.diskContentsColumnCount; i++) {
+                columnNames[i] = "Title " + String.valueOf(i + 1);
+            }
+
+            //Now I can build a model using the data
+            DefaultTableModel defaultTableModel = new DefaultTableModel(data, columnNames);
+            
+            //Set the model into the table
+            this.jTableVirtualDriveContents.setModel(defaultTableModel);
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
