@@ -24,3 +24,7 @@ hs_err_pid*
 /FileSystemSimulator/nbproject/private/
 /nbproject/private/
 /build/
+/dist/
+
+# virtual drive data
+drive.dat
