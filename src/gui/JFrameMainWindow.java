@@ -56,6 +56,7 @@ public class JFrameMainWindow extends javax.swing.JFrame {
         jLabelFileSize = new javax.swing.JLabel();
         jLabelCreationDate = new javax.swing.JLabel();
         jLabelModificationDate = new javax.swing.JLabel();
+        jLabelParentElement = new javax.swing.JLabel();
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenuFile = new javax.swing.JMenu();
         jMenuItemCreateVirtualDisk = new javax.swing.JMenuItem();
@@ -165,6 +166,9 @@ public class JFrameMainWindow extends javax.swing.JFrame {
         jLabelModificationDate.setHorizontalAlignment(javax.swing.SwingConstants.TRAILING);
         jLabelModificationDate.setText("N/A");
 
+        jLabelParentElement.setHorizontalAlignment(javax.swing.SwingConstants.TRAILING);
+        jLabelParentElement.setText("N/A");
+
         jMenuFile.setText("File");
 
         jMenuItemCreateVirtualDisk.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_N, java.awt.event.InputEvent.ALT_DOWN_MASK | java.awt.event.InputEvent.CTRL_DOWN_MASK));
@@ -219,6 +223,11 @@ public class JFrameMainWindow extends javax.swing.JFrame {
 
         jMenuItemRemove.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_DELETE, 0));
         jMenuItemRemove.setText("Remove");
+        jMenuItemRemove.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItemRemoveActionPerformed(evt);
+            }
+        });
         jMenuEdit.add(jMenuItemRemove);
 
         jMenuBar1.add(jMenuEdit);
@@ -260,7 +269,8 @@ public class JFrameMainWindow extends javax.swing.JFrame {
                                         .addComponent(jLabelNodeName, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 150, Short.MAX_VALUE)
                                         .addComponent(jLabelFileSize, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                         .addComponent(jLabelCreationDate, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                        .addComponent(jLabelModificationDate, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                                        .addComponent(jLabelModificationDate, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .addComponent(jLabelParentElement, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                                 .addGap(0, 0, Short.MAX_VALUE)))))
                 .addContainerGap())
         );
@@ -281,7 +291,9 @@ public class JFrameMainWindow extends javax.swing.JFrame {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jLabelCreationDate)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jLabelModificationDate)))
+                        .addComponent(jLabelModificationDate)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jLabelParentElement)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 12, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
                     .addGroup(layout.createSequentialGroup()
@@ -483,6 +495,24 @@ public class JFrameMainWindow extends javax.swing.JFrame {
         this.updateFileContents(nodeInfo);
     }//GEN-LAST:event_jButtonDiscardActionPerformed
 
+    private void jMenuItemRemoveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItemRemoveActionPerformed
+        DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode) 
+                this.jTreeDirectoryTree.getLastSelectedPathComponent();
+
+        //Selected node shouldn't have changed to null
+        if (selectedNode == null) return;
+
+        //There's a node selected
+        FileSystemNode nodeInfo = (FileSystemNode)selectedNode.getUserObject();
+        
+        //To avoid errors
+        this.jTreeDirectoryTree.clearSelection();
+        
+        //Remove the node and update the view
+        this.driveManager.removeNode(nodeInfo);
+        this.updateTree();
+    }//GEN-LAST:event_jMenuItemRemoveActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -550,7 +580,7 @@ public class JFrameMainWindow extends javax.swing.JFrame {
         
         //Now I need to check if it's a file, or a directory node
         if (node instanceof FileNode) {
-            return new DefaultMutableTreeNode((FileNode)node, false);
+            return new DefaultMutableTreeNode(node, false);
         }
         
         //It's a directory, need to go through each node
@@ -596,12 +626,20 @@ public class JFrameMainWindow extends javax.swing.JFrame {
         Now, I have to show it's info in the information panel, and the contents
         should the selected node be a file
         */
+        this.jLabelFileSize.setText(String.valueOf(fileSystemNode.getSize()) + " B");
+        this.jLabelCreationDate.setText(fileSystemNode.getCreationDate().toString());
+        this.jLabelModificationDate.setText(fileSystemNode.getModificationDate().toString());
+        if (fileSystemNode.getParent() != null) {
+            this.jLabelParentElement.setText(fileSystemNode.getParent().toString());
+        } else {
+            this.jLabelParentElement.setText("N/A");
+        }
+        
+        //Now I'm missing specific information from the node itself: its contents
+        //And name
         if (fileSystemNode instanceof FileNode) {
             FileNode fileNode = (FileNode) fileSystemNode;
             this.jLabelNodeName.setText("File: " + fileNode.getName());
-            this.jLabelFileSize.setText(String.valueOf(fileNode.getSize()) + " B");
-            this.jLabelCreationDate.setText(fileNode.getCreationDate().toString());
-            this.jLabelModificationDate.setText(fileNode.getModificationDate().toString());
             
             //Need to split the file information into the column count
             char [] contents = this.driveManager.getData(fileNode);
@@ -631,9 +669,6 @@ public class JFrameMainWindow extends javax.swing.JFrame {
         } else if (fileSystemNode instanceof DirectoryNode) {
             DirectoryNode directoryNode = (DirectoryNode) fileSystemNode;
             this.jLabelNodeName.setText("Directory: " + directoryNode.getName());
-            this.jLabelFileSize.setText(String.valueOf(directoryNode.getSize()) + " B");
-            this.jLabelCreationDate.setText(directoryNode.getCreationDate().toString());
-            this.jLabelModificationDate.setText(directoryNode.getModificationDate().toString());
             
             //Update the content table to an empty table
             String[] columnNames = new String[this.fileEditorColumnCount];
@@ -683,6 +718,7 @@ public class JFrameMainWindow extends javax.swing.JFrame {
     private javax.swing.JLabel jLabelFileSize;
     private javax.swing.JLabel jLabelModificationDate;
     private javax.swing.JLabel jLabelNodeName;
+    private javax.swing.JLabel jLabelParentElement;
     private javax.swing.JMenuBar jMenuBar1;
     private javax.swing.JMenu jMenuEdit;
     private javax.swing.JMenu jMenuFile;

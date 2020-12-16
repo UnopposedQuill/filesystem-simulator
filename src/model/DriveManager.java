@@ -187,7 +187,7 @@ public class DriveManager {
         }
         
         //Lastly I can now insert it
-        this.currentDirectory.addChildren(new FileNode(sectors[0], sectors[sectorAmount-1], fileSize, extension, name, currentDirectory));
+        this.currentDirectory.addChildren(new FileNode(sectors[0], sectors[sectorAmount-1], fileSize, extension, name, this.currentDirectory));
     }
     
     /**
@@ -243,5 +243,21 @@ public class DriveManager {
      */
     public char[] getContent() {
         return this.diskContents;
+    }
+    
+    public void removeNode(FileSystemNode fileSystemNode) {
+        if (fileSystemNode != null){
+            if (fileSystemNode instanceof DirectoryNode) {
+                DirectoryNode directoryNode = (DirectoryNode) fileSystemNode;
+                //I need to free all of its childs
+                for (int i = 0; i < directoryNode.getChildren().size(); i++) {
+                    removeNode(fileSystemNode);
+                }
+            }
+            //I cannot ever remove the root file, but I can remove the contents in it
+            if (fileSystemNode != this.rootNode){
+                fileSystemNode.parent.getChildren().remove(fileSystemNode);
+            }
+        }
     }
 }
