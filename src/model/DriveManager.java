@@ -184,10 +184,14 @@ public class DriveManager {
             sectors[i] = this.getFirstEmptySector();
             //I need to hook each sector to its next one
             if (i > 0) sectors[i-1].setNextSector(sectors[i]);
+            
+            for (int j = 0; j < this.sectorSize; j++) {
+                this.diskContents[sectors[i].getSectorPointer() + j] = 0;
+            }
         }
         
         //Lastly I can now insert it
-        this.currentDirectory.addChildren(new FileNode(sectors[0], sectors[sectorAmount-1], fileSize, extension, name, currentDirectory));
+        this.currentDirectory.addChildren(new FileNode(sectors[0], sectors[sectorAmount-1], fileSize, extension, name, this.currentDirectory));
     }
     
     /**
@@ -243,5 +247,29 @@ public class DriveManager {
      */
     public char[] getContent() {
         return this.diskContents;
+    }
+    
+    public void removeNode(FileSystemNode fileSystemNode) {
+        if (fileSystemNode != null){
+            if (fileSystemNode instanceof DirectoryNode) {
+                DirectoryNode directoryNode = (DirectoryNode) fileSystemNode;
+                //I need to free all of its childs
+                for (int i = 0; i < directoryNode.getChildren().size(); i++) {
+                    removeNode(fileSystemNode);
+                }
+            }
+            //I cannot ever remove the root file, but I can remove the contents in it
+            if (fileSystemNode != this.rootNode){
+                //Now I have to free its data
+                FileNode fileNode = (FileNode) fileSystemNode;
+                FileSector pointer = fileNode.getBegin();
+                while(pointer != null){
+                    this.freeSector(pointer);
+                    pointer = pointer.getNextSector();
+                }
+                
+                fileSystemNode.parent.getChildren().remove(fileSystemNode);
+            }
+        }
     }
 }

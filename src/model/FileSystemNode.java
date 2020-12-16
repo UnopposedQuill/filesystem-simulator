@@ -32,6 +32,7 @@ public abstract class FileSystemNode {
     public FileSystemNode(DirectoryNode parent, String name) {
         this.name = name;
         this.creationDate = this.modificationDate = GregorianCalendar.getInstance().getTime();
+        this.parent = parent;
     }
 
     public String getName() {
@@ -52,6 +53,10 @@ public abstract class FileSystemNode {
 
     public Date getCreationDate() {
         return creationDate;
+    }
+    
+    public DirectoryNode getParent() {
+        return this.parent;
     }
     
     /**
