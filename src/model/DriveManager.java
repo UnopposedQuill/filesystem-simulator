@@ -78,10 +78,10 @@ public class DriveManager {
         DirectoryNode previousDirectory = currentDirectory;
         
         //First check if it's absolute or relative route
-        if (route.startsWith("/")) {
+        if (route.startsWith("/root/")) {
             //Absolute route
             this.currentDirectory = this.rootNode;
-            route = route.substring(1);//Remove the starting '/'
+            route = route.substring(6);//Remove the starting '/'
         }
         
         String[] directoryNames = route.isEmpty() ? new String[0] : route.split("/");

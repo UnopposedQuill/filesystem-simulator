@@ -320,7 +320,7 @@ public class JFrameMainWindow extends javax.swing.JFrame {
 
             this.driveManager = new DriveManager(diskSize, sectorSize);
             
-            this.jTextFieldCurrentDirectory.setText("/");
+            this.jTextFieldCurrentDirectory.setText("/root/");
             this.updateTree();
             this.updateDiskContents();
         } catch (NumberFormatException ex){
