@@ -443,6 +443,14 @@ public class JFrameMainWindow extends javax.swing.JFrame {
             this.jLabelFileSize.setText(String.valueOf(directoryNode.getSize()) + " B");
             this.jLabelCreationDate.setText(directoryNode.getCreationDate().toString());
             this.jLabelModificationDate.setText(directoryNode.getModificationDate().toString());
+            
+            //Update the content table to an empty table
+            String[] columnNames = new String[this.fileEditorColumnCount];
+            for (int i = 0; i < this.fileEditorColumnCount; i++) {
+                columnNames[i] = "Title " + String.valueOf(i + 1);
+            }
+
+            this.jTableFileContents.setModel(new DefaultTableModel(new Object[0][0], columnNames));
         }
         
     }//GEN-LAST:event_jTreeDirectoryTreeValueChanged
