@@ -138,6 +138,7 @@ public class JFrameMainWindow extends javax.swing.JFrame {
         });
 
         jButtonSaveChanges.setText("Save");
+        jButtonSaveChanges.setEnabled(false);
         jButtonSaveChanges.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButtonSaveChangesActionPerformed(evt);
@@ -145,6 +146,7 @@ public class JFrameMainWindow extends javax.swing.JFrame {
         });
 
         jButtonDiscard.setText("Discard");
+        jButtonDiscard.setEnabled(false);
         jButtonDiscard.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButtonDiscardActionPerformed(evt);

@@ -420,6 +420,7 @@
     <Component class="javax.swing.JButton" name="jButtonSaveChanges">
       <Properties>
         <Property name="text" type="java.lang.String" value="Save"/>
+        <Property name="enabled" type="boolean" value="false"/>
       </Properties>
       <Events>
         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jButtonSaveChangesActionPerformed"/>
@@ -428,6 +429,7 @@
     <Component class="javax.swing.JButton" name="jButtonDiscard">
       <Properties>
         <Property name="text" type="java.lang.String" value="Discard"/>
+        <Property name="enabled" type="boolean" value="false"/>
       </Properties>
       <Events>
         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jButtonDiscardActionPerformed"/>
