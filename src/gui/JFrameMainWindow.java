@@ -11,6 +11,7 @@ import javax.swing.tree.TreePath;
 import model.DirectoryNode;
 import model.DriveManager;
 import model.FileNode;
+import model.FileSector;
 import model.FileSystemNode;
 
 /**
@@ -21,11 +22,14 @@ public class JFrameMainWindow extends javax.swing.JFrame {
 
     private DriveManager driveManager = null;
     
+    private int fileEditorColumnCount;
+    
     /**
      * Creates new form JFrameMainWindow
      */
     public JFrameMainWindow() {
         initComponents();
+        this.fileEditorColumnCount = this.jTableFileContents.getColumnCount();
     }
 
     /**
@@ -408,6 +412,30 @@ public class JFrameMainWindow extends javax.swing.JFrame {
             this.jLabelFileSize.setText(String.valueOf(fileNode.getSize()) + " B");
             this.jLabelCreationDate.setText(fileNode.getCreationDate().toString());
             this.jLabelModificationDate.setText(fileNode.getModificationDate().toString());
+            
+            //Need to split the file information into the column count
+            char [] contents = this.driveManager.getData(fileNode);
+//            for (int i = 0; i < contents.length; i++) {
+//                System.out.print((int) contents[i]);
+//            }
+            
+            int rowCount = (int)Math.ceil((double)contents.length/this.fileEditorColumnCount);
+            Integer [][] data = new Integer[rowCount][this.fileEditorColumnCount];
+            for (int i = 0; i < contents.length; i++) {
+                data[i/this.fileEditorColumnCount][i%this.fileEditorColumnCount] = (int)contents[i];
+            }
+            
+            //Now that I have the data, I need the columns
+            String[] columnNames = new String[this.fileEditorColumnCount];
+            for (int i = 0; i < this.fileEditorColumnCount; i++) {
+                columnNames[i] = "Title " + String.valueOf(i + 1);
+            }
+
+            //Now I can build a model using the data
+            DefaultTableModel defaultTableModel = new DefaultTableModel(data, columnNames);
+            
+            //And finally set the model into the table
+            this.jTableFileContents.setModel(defaultTableModel);
             
         } else if (nodeInfo instanceof DirectoryNode) {
             DirectoryNode directoryNode = (DirectoryNode) nodeInfo;
