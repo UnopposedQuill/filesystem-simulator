@@ -255,17 +255,19 @@ public class DriveManager {
                 DirectoryNode directoryNode = (DirectoryNode) fileSystemNode;
                 //I need to free all of its childs
                 for (int i = 0; i < directoryNode.getChildren().size(); i++) {
-                    removeNode(fileSystemNode);
+                    removeNode(directoryNode.getChildren().get(i));
                 }
             }
             //I cannot ever remove the root file, but I can remove the contents in it
             if (fileSystemNode != this.rootNode){
                 //Now I have to free its data
-                FileNode fileNode = (FileNode) fileSystemNode;
-                FileSector pointer = fileNode.getBegin();
-                while(pointer != null){
-                    this.freeSector(pointer);
-                    pointer = pointer.getNextSector();
+                if (fileSystemNode instanceof FileNode) {
+                    FileNode fileNode = (FileNode) fileSystemNode;
+                    FileSector pointer = fileNode.getBegin();
+                    while(pointer != null){
+                        this.freeSector(pointer);
+                        pointer = pointer.getNextSector();
+                    }
                 }
                 
                 fileSystemNode.parent.getChildren().remove(fileSystemNode);
