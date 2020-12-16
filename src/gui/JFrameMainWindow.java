@@ -103,7 +103,7 @@ public class JFrameMainWindow extends javax.swing.JFrame {
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.Byte.class, java.lang.Byte.class, java.lang.Byte.class, java.lang.Byte.class, java.lang.Byte.class, java.lang.Byte.class, java.lang.Byte.class, java.lang.Byte.class, java.lang.Byte.class, java.lang.Byte.class
+                java.lang.Integer.class, java.lang.Integer.class, java.lang.Integer.class, java.lang.Integer.class, java.lang.Integer.class, java.lang.Integer.class, java.lang.Integer.class, java.lang.Integer.class, java.lang.Integer.class, java.lang.Integer.class
             };
 
             public Class getColumnClass(int columnIndex) {
@@ -432,11 +432,23 @@ public class JFrameMainWindow extends javax.swing.JFrame {
                 for (int i = 0; i < fileNode.getSize(); i++) {
                     
                     //First get the cell value, then parse it to an int, the to a char
-                    int integerCellValue = (int)this.jTableFileContents.getModel().getValueAt(i/this.fileEditorColumnCount, i%this.fileEditorColumnCount);
-                    data[i] = (char)integerCellValue;
+                    Object originalCellValue = this.jTableFileContents.getModel().getValueAt(i/this.fileEditorColumnCount, i%this.fileEditorColumnCount);
+                    
+                    //This is for edited cells
+                    if (originalCellValue instanceof String) {
+                        int integerCellValue = Integer.parseInt((String)originalCellValue);
+                        data[i] = (char)integerCellValue;
+                    } else if (originalCellValue instanceof Integer){
+                        int integerCellValue = (int)originalCellValue;
+                        data[i] = (char)integerCellValue;
+                    } else {
+                        //Undefined type
+                        data[i] = 0;
+                    }
                 }
 
                 this.driveManager.saveData(fileNode, data);
+                this.updateFileContents(nodeInfo);
 
                 //Add a confirmation message
                 JOptionPane.showMessageDialog(null, "Contents Saved");

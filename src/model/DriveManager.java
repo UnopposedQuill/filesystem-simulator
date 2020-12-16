@@ -223,15 +223,13 @@ public class DriveManager {
                 counter = 0;
         
         //While I'm missing some characters to save
-        while(counter < amountToSave){
+        while(pointer != null){
+        //while(counter < amountToSave){
             
-            //First I need to check if the contents fit exactly in the sector
-            if (counter * this.sectorSize + this.sectorSize < amountToSave) {
-                DriveManager.copyArrayContents(this.diskContents, pointer.getSectorPointer(), data, counter * this.sectorSize, this.sectorSize);
-                counter += this.sectorSize;
-            } else {
-                throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-            }
+            //Move current remaining data into the sector
+            DriveManager.copyArrayContents(this.diskContents, pointer.getSectorPointer(), data, counter, this.sectorSize);
+            counter += this.sectorSize;
+            pointer = pointer.getNextSector();
         }
     }
 
