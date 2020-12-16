@@ -152,10 +152,10 @@ public class DriveManager {
         this.ocuppiedSectors[fileSector.getSectorPointer()/sectorSize] = false;
     }
     
-    private void copyArrayContents(char[] destination, char[] source, int offset, int amount){
+    private static void copyArrayContents(char[] destination, int destOffset, char[] source, int sourceOffset, int amount){
         int initialPosition = 0;
         while(amount-- > 0){
-            destination[initialPosition++] = source[offset++];
+            destination[(initialPosition++) + destOffset] = source[sourceOffset++];
         }
     }
     
@@ -200,7 +200,7 @@ public class DriveManager {
         int counter = 0;
         FileSector pointer = fileNode.getBegin();
         while (pointer != null){
-            for (int i = 0; i < this.sectorSize; i++) {
+            for (int i = 0; i < this.sectorSize && (counter * sectorSize) + i < fileNode.getSize(); i++) {
                 contents[(counter * sectorSize) + i] =
                         this.diskContents[pointer.getSectorPointer() + i];
             }
@@ -209,5 +209,36 @@ public class DriveManager {
         } 
         
         return contents;
+    }
+    
+    /**
+     * This will take care of overwritting the previous data using the new data
+     * @param fileNode The node whose data will be overwritten
+     * @param data The data which will be saved on top of the previous one
+     */
+    public void saveData(FileNode fileNode, char[] data){
+        FileSector pointer = fileNode.getBegin();
+        //I will use the min here, but it should be the same
+        int amountToSave = Math.min(data.length, fileNode.getSize()),
+                counter = 0;
+        
+        //While I'm missing some pointers
+        while(pointer != null){
+        //while(counter < amountToSave){
+            
+            //Move current remaining data into the sector
+            DriveManager.copyArrayContents(this.diskContents, pointer.getSectorPointer(), data, counter, this.sectorSize - ((counter + sectorSize) - amountToSave));
+            counter += this.sectorSize - ((counter + sectorSize) - amountToSave);
+            pointer = pointer.getNextSector();
+        }
+    }
+
+    /**
+     * This will return an array representing the data of the current contents
+     * It is linked to the actual contents
+     * @return An array pointer to the current diskContents
+     */
+    public char[] getContent() {
+        return this.diskContents;
     }
 }
