@@ -4,6 +4,7 @@ package gui;
 import java.io.IOException;
 import java.util.Collections;
 import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreePath;
@@ -44,6 +45,12 @@ public class JFrameMainWindow extends javax.swing.JFrame {
         jScrollPane3 = new javax.swing.JScrollPane();
         jTableVirtualDriveContents = new javax.swing.JTable();
         jButtonGoDirectory = new javax.swing.JButton();
+        jButtonSaveChanges = new javax.swing.JButton();
+        jButtonDiscard = new javax.swing.JButton();
+        jLabelNodeName = new javax.swing.JLabel();
+        jLabelFileSize = new javax.swing.JLabel();
+        jLabelCreationDate = new javax.swing.JLabel();
+        jLabelModificationDate = new javax.swing.JLabel();
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenuFile = new javax.swing.JMenu();
         jMenuItemCreateVirtualDisk = new javax.swing.JMenuItem();
@@ -107,13 +114,13 @@ public class JFrameMainWindow extends javax.swing.JFrame {
 
         jTableVirtualDriveContents.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {"1", "127", "-128", "100"},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null}
+                {"1", "127", "-128", "100", null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null, null}
             },
             new String [] {
-                "Title 1", "Title 2", "Title 3", "Title 4"
+                "Title 1", "Title 2", "Title 3", "Title 4", "Title 5", "Title 6", "Title 7", "Title 8", "Title 9", "Title 10"
             }
         ));
         jTableVirtualDriveContents.setShowGrid(true);
@@ -126,6 +133,22 @@ public class JFrameMainWindow extends javax.swing.JFrame {
                 jButtonGoDirectoryActionPerformed(evt);
             }
         });
+
+        jButtonSaveChanges.setText("Save");
+
+        jButtonDiscard.setText("Discard");
+
+        jLabelNodeName.setHorizontalAlignment(javax.swing.SwingConstants.TRAILING);
+        jLabelNodeName.setText("<No File Selected>");
+
+        jLabelFileSize.setHorizontalAlignment(javax.swing.SwingConstants.TRAILING);
+        jLabelFileSize.setText("N/A B");
+
+        jLabelCreationDate.setHorizontalAlignment(javax.swing.SwingConstants.TRAILING);
+        jLabelCreationDate.setText("N/A");
+
+        jLabelModificationDate.setHorizontalAlignment(javax.swing.SwingConstants.TRAILING);
+        jLabelModificationDate.setText("N/A");
 
         jMenuFile.setText("File");
 
@@ -202,14 +225,28 @@ public class JFrameMainWindow extends javax.swing.JFrame {
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 388, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
-                        .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
-                    .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 888, Short.MAX_VALUE)
-                    .addGroup(layout.createSequentialGroup()
                         .addComponent(jTextFieldCurrentDirectory)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jButtonGoDirectory)))
+                        .addComponent(jButtonGoDirectory))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                            .addComponent(jScrollPane3, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+                            .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 388, Short.MAX_VALUE))
+                        .addGap(18, 18, 18)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 482, Short.MAX_VALUE)
+                            .addGroup(layout.createSequentialGroup()
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addComponent(jButtonSaveChanges)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                        .addComponent(jButtonDiscard))
+                                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                                        .addComponent(jLabelNodeName, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 150, Short.MAX_VALUE)
+                                        .addComponent(jLabelFileSize, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .addComponent(jLabelCreationDate, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .addComponent(jLabelModificationDate, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                                .addGap(0, 0, Short.MAX_VALUE)))))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -220,11 +257,25 @@ public class JFrameMainWindow extends javax.swing.JFrame {
                     .addComponent(jTextFieldCurrentDirectory, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jButtonGoDirectory))
                 .addGap(18, 18, 18)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 421, Short.MAX_VALUE)
-                    .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 291, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 421, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jLabelNodeName)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jLabelFileSize)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jLabelCreationDate)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jLabelModificationDate)))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 12, Short.MAX_VALUE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jButtonSaveChanges)
+                            .addComponent(jButtonDiscard)))
+                    .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 291, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap())
         );
 
@@ -351,7 +402,20 @@ public class JFrameMainWindow extends javax.swing.JFrame {
         Now, I have to show it's info in the information panel, and the contents
         should the selected node be a file
         */
-        
+        if (nodeInfo instanceof FileNode) {
+            FileNode fileNode = (FileNode) nodeInfo;
+            this.jLabelNodeName.setText("File: " + fileNode.getName());
+            this.jLabelFileSize.setText(String.valueOf(fileNode.getSize()) + " B");
+            this.jLabelCreationDate.setText(fileNode.getCreationDate().toString());
+            this.jLabelModificationDate.setText(fileNode.getModificationDate().toString());
+            
+        } else if (nodeInfo instanceof DirectoryNode) {
+            DirectoryNode directoryNode = (DirectoryNode) nodeInfo;
+            this.jLabelNodeName.setText("Directory: " + directoryNode.getName());
+            this.jLabelFileSize.setText(String.valueOf(directoryNode.getSize()) + " B");
+            this.jLabelCreationDate.setText(directoryNode.getCreationDate().toString());
+            this.jLabelModificationDate.setText(directoryNode.getModificationDate().toString());
+        }
         
     }//GEN-LAST:event_jTreeDirectoryTreeValueChanged
 
@@ -459,8 +523,14 @@ public class JFrameMainWindow extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton jButtonDiscard;
     private javax.swing.JButton jButtonGoDirectory;
+    private javax.swing.JButton jButtonSaveChanges;
     private javax.swing.JCheckBoxMenuItem jCheckBoxMenuItemFastCd;
+    private javax.swing.JLabel jLabelCreationDate;
+    private javax.swing.JLabel jLabelFileSize;
+    private javax.swing.JLabel jLabelModificationDate;
+    private javax.swing.JLabel jLabelNodeName;
     private javax.swing.JMenuBar jMenuBar1;
     private javax.swing.JMenu jMenuEdit;
     private javax.swing.JMenu jMenuFile;

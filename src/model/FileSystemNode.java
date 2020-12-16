@@ -61,4 +61,6 @@ public abstract class FileSystemNode {
      */
     @Override
     public abstract String toString();
+    
+    public abstract int getSize();
 }

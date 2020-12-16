@@ -73,4 +73,15 @@ public class DirectoryNode extends FileSystemNode{
     public String toString() {
         return this.getName();
     }
+    
+    /**
+     * Will return the sum of each of its subchildren
+     * @return An int representing the amount of bytes occupied by its children
+     */
+    @Override
+    public int getSize(){
+        return this.children.stream().mapToInt( (t) -> {
+            return t.getSize();
+        }).sum();
+    }
 }

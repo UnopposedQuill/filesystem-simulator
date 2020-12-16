@@ -49,6 +49,7 @@ public class FileNode extends FileSystemNode{
         this.endFileSector = end;
     }
 
+    @Override
     public int getSize() {
         return size;
     }
