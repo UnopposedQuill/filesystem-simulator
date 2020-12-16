@@ -12,7 +12,8 @@ public class FileNode extends FileSystemNode{
     /**
      * Pointers to the initial sector and the finalizing sector
      */
-    private int begin, end;
+    private FileSector beginFileSector, endFileSector;
+    //private int begin, end;
     
     /**
      * The current amount of characters that belong to said file
@@ -24,28 +25,28 @@ public class FileNode extends FileSystemNode{
      */
     private final String extension;
 
-    public FileNode(int begin, int end, int size, String extension, String name, DirectoryNode parent) {
+    public FileNode(FileSector beginFileSector, FileSector endFileSector, int size, String extension, String name, DirectoryNode parent) {
         super(parent, name);
-        this.begin = begin;
-        this.end = end;
         this.size = size;
         this.extension = extension;
+        this.beginFileSector = beginFileSector;
+        this.endFileSector = endFileSector;
     }
 
-    public int getBegin() {
-        return begin;
+    public FileSector getBegin() {
+        return beginFileSector;
     }
 
-    public void setBegin(int begin) {
-        this.begin = begin;
+    public void setBegin(FileSector begin) {
+        this.beginFileSector = begin;
     }
 
-    public int getEnd() {
-        return end;
+    public FileSector getEnd() {
+        return endFileSector;
     }
 
-    public void setEnd(int end) {
-        this.end = end;
+    public void setEnd(FileSector end) {
+        this.endFileSector = end;
     }
 
     public int getSize() {

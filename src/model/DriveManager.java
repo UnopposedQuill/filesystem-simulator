@@ -10,6 +10,7 @@ import java.io.IOException;
  */
 public class DriveManager {
     private final char[] diskContents;
+    private final boolean[] ocuppiedSectors;
     private final int sectorSize;
     private final File diskFile;
     private final DirectoryNode rootNode;
@@ -30,6 +31,12 @@ public class DriveManager {
         }
         
         this.sectorSize = sectorSize;
+        
+        //Update the free sector array
+        this.ocuppiedSectors = new boolean[diskContents.length/sectorSize];
+        for (int i = 0; i < ocuppiedSectors.length; i++) {
+            ocuppiedSectors[i] = false;//Every sector is free right now
+        }
         
         //Now I need to create the file representing the disk
         diskFile = new File("drive.dat");
@@ -119,7 +126,66 @@ public class DriveManager {
         return rootNode;
     }
     
-    public void createFile(){
+    /**
+     * This will return the first empty sector in the drive
+     * @return A file sector pointing to the first empty sector of this drive
+     * It may return null if the drive is full
+     */
+    public FileSector getFirstEmptySector(){
         
+        //I need a pointer to said sector
+        for (int i = 0; i < this.ocuppiedSectors.length; i++) {
+            if (!this.ocuppiedSectors[i]) {
+                //This sector is free, set it to occupied and return it
+                this.ocuppiedSectors[i] = true;
+                return new FileSector(i * sectorSize, null);
+            }
+        }
+        return null;//Disk is full
+    }
+    
+    /**
+     * This will flag as free the given file sector
+     * @param fileSector The file sector to be freed
+     */
+    private void freeSector(FileSector fileSector){
+        this.ocuppiedSectors[fileSector.getSectorPointer()/sectorSize] = false;
+    }
+    
+    private void copyArrayContents(char[] destination, char[] source, int offset, int amount){
+        int initialPosition = 0;
+        while(amount-- > 0){
+            destination[initialPosition++] = source[offset++];
+        }
+    }
+    
+    /**
+     * Checks if each element in array is blank, if it is returns true
+     * @param array An array from which all its elements will be checked
+     * @return True should every character in array is blank
+     */
+    private static boolean isBlank(char [] array){
+        for (int i = 0; i < array.length; i++) {
+            if (array[i] != 0) {
+                return false;//Found a non-blank character
+            }
+        }
+        return false;
+    }
+    
+    public void createFile(int fileSize, String extension, String name){
+        //First I need to allocate enough sectors for this file
+        int sectorAmount = (int)Math.ceil((double)fileSize/sectorSize);
+        FileSector[] sectors = new FileSector[sectorAmount];
+        
+        //Populate with empty sectors
+        for (int i = 0; i < sectors.length; i++) {
+            sectors[i] = this.getFirstEmptySector();
+            //I need to hook each sector to its next one
+            if (i > 0) sectors[i-1].setNextSector(sectors[i]);
+        }
+        
+        //Lastly I can now insert it
+        this.currentDirectory.addChildren(new FileNode(sectors[0], sectors[sectorAmount-1], fileSize, extension, name, currentDirectory));
     }
 }

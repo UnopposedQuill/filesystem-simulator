@@ -235,12 +235,30 @@ public class JFrameMainWindow extends javax.swing.JFrame {
         if (driveManager == null) {
             JOptionPane.showMessageDialog(null, "Please first create a virtual drive");
         } else {
-            driveManager.createFile();
+            try{
+                //I need to go through each of the three parameters to check for cancelation
+                Object fileName = JOptionPane.showInputDialog("Please enter the name for the file", "New File");
+                if (!fileName.equals(JOptionPane.CANCEL_OPTION)) {
+                    
+                    Object fileExtension = JOptionPane.showInputDialog("Please enter the file's extension", "txt");
+                    if (!fileExtension.equals(JOptionPane.CANCEL_OPTION)) {
 
-            //Now I need to update the tree to change accordingly
-            this.updateTree();
-            this.focusNode((DefaultMutableTreeNode)this.jTreeDirectoryTree.getModel().getRoot(),
-                    new DefaultMutableTreeNode(this.driveManager.getCurrentDirectory()));
+                        Object fileSize = JOptionPane.showInputDialog("Please enter the number of bytes for the file", 32);
+                        if (!fileSize.equals(JOptionPane.CANCEL_OPTION)) {
+
+                            //Use the input info to create the file
+                            driveManager.createFile(Integer.parseInt(fileSize.toString()), fileExtension.toString(), fileName.toString());
+
+                            //Now I need to update the tree to change accordingly
+                            this.updateTree();
+                            this.focusNode((DefaultMutableTreeNode)this.jTreeDirectoryTree.getModel().getRoot(),
+                                    new DefaultMutableTreeNode(this.driveManager.getCurrentDirectory()));
+                        }
+                    }
+                }
+            } catch (NumberFormatException ex){
+                java.util.logging.Logger.getLogger(JFrameMainWindow.class.getName()).log(java.util.logging.Level.WARNING, "Number couldn't be parsed", ex);
+            }
         }
     }//GEN-LAST:event_jMenuItemCreateFileActionPerformed
 
