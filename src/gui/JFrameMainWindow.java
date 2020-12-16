@@ -2,12 +2,10 @@
 package gui;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Collections;
 import javax.swing.JOptionPane;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
-import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 import model.DirectoryNode;
 import model.DriveManager;
@@ -72,22 +70,29 @@ public class JFrameMainWindow extends javax.swing.JFrame {
 
         javax.swing.tree.DefaultMutableTreeNode treeNode1 = new javax.swing.tree.DefaultMutableTreeNode("root");
         jTreeDirectoryTree.setModel(new javax.swing.tree.DefaultTreeModel(treeNode1));
+        jTreeDirectoryTree.addTreeSelectionListener(new javax.swing.event.TreeSelectionListener() {
+            public void valueChanged(javax.swing.event.TreeSelectionEvent evt) {
+                jTreeDirectoryTreeValueChanged(evt);
+            }
+        });
         jScrollPane1.setViewportView(jTreeDirectoryTree);
+
+        jScrollPane2.setVerticalScrollBarPolicy(javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
 
         jTableFileContents.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                { new Byte((byte) 0),  new Byte((byte) 1),  new Byte((byte) 2),  new Byte((byte) 3)},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null}
+                { new Byte((byte) 0),  new Byte((byte) 1),  new Byte((byte) 2),  new Byte((byte) 3), null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null, null}
             },
             new String [] {
-                "Title 1", "Title 2", "Title 3", "Title 4"
+                "Title 1", "Title 2", "Title 3", "Title 4", "Title 5", "Title 6", "Title 7", "Title 8", "Title 9", "Title 10"
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.Byte.class, java.lang.Byte.class, java.lang.Byte.class, java.lang.Byte.class
+                java.lang.Byte.class, java.lang.Byte.class, java.lang.Byte.class, java.lang.Byte.class, java.lang.Byte.class, java.lang.Byte.class, java.lang.Byte.class, java.lang.Byte.class, java.lang.Byte.class, java.lang.Byte.class
             };
 
             public Class getColumnClass(int columnIndex) {
@@ -97,6 +102,8 @@ public class JFrameMainWindow extends javax.swing.JFrame {
         jTableFileContents.setShowGrid(true);
         jTableFileContents.setTableHeader(null);
         jScrollPane2.setViewportView(jTableFileContents);
+
+        jScrollPane3.setVerticalScrollBarPolicy(javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
 
         jTableVirtualDriveContents.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -216,8 +223,8 @@ public class JFrameMainWindow extends javax.swing.JFrame {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 421, Short.MAX_VALUE)
                     .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 297, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 291, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
 
@@ -298,7 +305,6 @@ public class JFrameMainWindow extends javax.swing.JFrame {
                     this.focusNode((DefaultMutableTreeNode)this.jTreeDirectoryTree.getModel().getRoot(),
                             new DefaultMutableTreeNode(this.driveManager.getCurrentDirectory()));
                 }
-                
             }
         }
     }//GEN-LAST:event_jMenuItemCreateDirectoryActionPerformed
@@ -330,6 +336,24 @@ public class JFrameMainWindow extends javax.swing.JFrame {
     private void jTextFieldCurrentDirectoryActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextFieldCurrentDirectoryActionPerformed
         this.jButtonGoDirectory.doClick();
     }//GEN-LAST:event_jTextFieldCurrentDirectoryActionPerformed
+
+    private void jTreeDirectoryTreeValueChanged(javax.swing.event.TreeSelectionEvent evt) {//GEN-FIRST:event_jTreeDirectoryTreeValueChanged
+        DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode) 
+                this.jTreeDirectoryTree.getLastSelectedPathComponent();
+
+        //If selection changed into none
+        if (selectedNode == null) return;
+
+        //There's a node selected
+        FileSystemNode nodeInfo = (FileSystemNode)selectedNode.getUserObject();
+
+        /*
+        Now, I have to show it's info in the information panel, and the contents
+        should the selected node be a file
+        */
+        
+        
+    }//GEN-LAST:event_jTreeDirectoryTreeValueChanged
 
     /**
      * @param args the command line arguments

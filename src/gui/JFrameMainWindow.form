@@ -160,8 +160,8 @@
                   <Component id="jScrollPane1" pref="421" max="32767" attributes="0"/>
                   <Component id="jScrollPane2" pref="0" max="32767" attributes="0"/>
               </Group>
-              <EmptySpace max="-2" attributes="0"/>
-              <Component id="jScrollPane3" pref="297" max="32767" attributes="0"/>
+              <EmptySpace type="unrelated" max="-2" attributes="0"/>
+              <Component id="jScrollPane3" min="-2" pref="291" max="-2" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
           </Group>
       </Group>
@@ -189,10 +189,16 @@
               <TreeModel code=""/>
             </Property>
           </Properties>
+          <Events>
+            <EventHandler event="valueChanged" listener="javax.swing.event.TreeSelectionListener" parameters="javax.swing.event.TreeSelectionEvent" handler="jTreeDirectoryTreeValueChanged"/>
+          </Events>
         </Component>
       </SubComponents>
     </Container>
     <Container class="javax.swing.JScrollPane" name="jScrollPane2">
+      <Properties>
+        <Property name="verticalScrollBarPolicy" type="int" value="22"/>
+      </Properties>
       <AuxValues>
         <AuxValue name="autoScrollPane" type="java.lang.Boolean" value="true"/>
       </AuxValues>
@@ -202,7 +208,7 @@
         <Component class="javax.swing.JTable" name="jTableFileContents">
           <Properties>
             <Property name="model" type="javax.swing.table.TableModel" editor="org.netbeans.modules.form.editors2.TableModelEditor">
-              <Table columnCount="4" rowCount="5">
+              <Table columnCount="10" rowCount="5">
                 <Column editable="true" title="Title 1" type="java.lang.Byte">
                   <Data value="0"/>
                   <Data value="null"/>
@@ -231,6 +237,12 @@
                   <Data value="null"/>
                   <Data value="null"/>
                 </Column>
+                <Column editable="true" title="Title 5" type="java.lang.Byte"/>
+                <Column editable="true" title="Title 6" type="java.lang.Byte"/>
+                <Column editable="true" title="Title 7" type="java.lang.Byte"/>
+                <Column editable="true" title="Title 8" type="java.lang.Byte"/>
+                <Column editable="true" title="Title 9" type="java.lang.Byte"/>
+                <Column editable="true" title="Title 10" type="java.lang.Byte"/>
               </Table>
             </Property>
             <Property name="columnModel" type="javax.swing.table.TableColumnModel" editor="org.netbeans.modules.form.editors2.TableColumnModelEditor">
@@ -266,6 +278,9 @@
       </SubComponents>
     </Container>
     <Container class="javax.swing.JScrollPane" name="jScrollPane3">
+      <Properties>
+        <Property name="verticalScrollBarPolicy" type="int" value="22"/>
+      </Properties>
       <AuxValues>
         <AuxValue name="autoScrollPane" type="java.lang.Boolean" value="true"/>
       </AuxValues>
