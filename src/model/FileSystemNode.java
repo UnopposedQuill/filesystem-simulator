@@ -46,8 +46,8 @@ public abstract class FileSystemNode {
         return modificationDate;
     }
 
-    public void setModificationDate(Date modificationDate) {
-        this.modificationDate = modificationDate;
+    public void updateModificationDate() {
+        this.modificationDate = GregorianCalendar.getInstance().getTime();
     }
 
     public Date getCreationDate() {

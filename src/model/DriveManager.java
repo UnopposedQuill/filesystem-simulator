@@ -4,6 +4,7 @@ package model;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+
 /**
  *
  * @author darkl
@@ -224,13 +225,15 @@ public class DriveManager {
         
         //While I'm missing some pointers
         while(pointer != null){
-        //while(counter < amountToSave){
             
             //Move current remaining data into the sector
             DriveManager.copyArrayContents(this.diskContents, pointer.getSectorPointer(), data, counter, this.sectorSize - ((counter + sectorSize) - amountToSave));
             counter += this.sectorSize - ((counter + sectorSize) - amountToSave);
             pointer = pointer.getNextSector();
         }
+        
+        //And lastly, change its modification date
+        fileNode.updateModificationDate();
     }
 
     /**
