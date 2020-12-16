@@ -47,21 +47,28 @@ public class JFrameMainWindow extends javax.swing.JFrame {
         jTableVirtualDriveContents = new javax.swing.JTable();
         jButtonGoDirectory = new javax.swing.JButton();
         jMenuBar1 = new javax.swing.JMenuBar();
-        jMenu1 = new javax.swing.JMenu();
+        jMenuFile = new javax.swing.JMenu();
         jMenuItemCreateVirtualDisk = new javax.swing.JMenuItem();
         jSeparator1 = new javax.swing.JPopupMenu.Separator();
         jMenuItemCreateFile = new javax.swing.JMenuItem();
         jMenuItemCreateDirectory = new javax.swing.JMenuItem();
-        jMenu2 = new javax.swing.JMenu();
+        jMenuEdit = new javax.swing.JMenu();
         jMenuItemFind = new javax.swing.JMenuItem();
         jMenuItemCopy = new javax.swing.JMenuItem();
         jMenuItemMove = new javax.swing.JMenuItem();
         jSeparator2 = new javax.swing.JPopupMenu.Separator();
         jMenuItemRemove = new javax.swing.JMenuItem();
+        jMenuSettings = new javax.swing.JMenu();
+        jCheckBoxMenuItemFastCd = new javax.swing.JCheckBoxMenuItem();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
         jTextFieldCurrentDirectory.setText("Disco no inicializado");
+        jTextFieldCurrentDirectory.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jTextFieldCurrentDirectoryActionPerformed(evt);
+            }
+        });
 
         javax.swing.tree.DefaultMutableTreeNode treeNode1 = new javax.swing.tree.DefaultMutableTreeNode("root");
         jTreeDirectoryTree.setModel(new javax.swing.tree.DefaultTreeModel(treeNode1));
@@ -113,7 +120,7 @@ public class JFrameMainWindow extends javax.swing.JFrame {
             }
         });
 
-        jMenu1.setText("File");
+        jMenuFile.setText("File");
 
         jMenuItemCreateVirtualDisk.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_N, java.awt.event.InputEvent.ALT_DOWN_MASK | java.awt.event.InputEvent.CTRL_DOWN_MASK));
         jMenuItemCreateVirtualDisk.setText("Create Virtual Disk");
@@ -122,8 +129,8 @@ public class JFrameMainWindow extends javax.swing.JFrame {
                 jMenuItemCreateVirtualDiskActionPerformed(evt);
             }
         });
-        jMenu1.add(jMenuItemCreateVirtualDisk);
-        jMenu1.add(jSeparator1);
+        jMenuFile.add(jMenuItemCreateVirtualDisk);
+        jMenuFile.add(jSeparator1);
 
         jMenuItemCreateFile.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_N, java.awt.event.InputEvent.CTRL_DOWN_MASK));
         jMenuItemCreateFile.setText("Create File");
@@ -132,7 +139,7 @@ public class JFrameMainWindow extends javax.swing.JFrame {
                 jMenuItemCreateFileActionPerformed(evt);
             }
         });
-        jMenu1.add(jMenuItemCreateFile);
+        jMenuFile.add(jMenuItemCreateFile);
 
         jMenuItemCreateDirectory.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_N, java.awt.event.InputEvent.SHIFT_DOWN_MASK | java.awt.event.InputEvent.CTRL_DOWN_MASK));
         jMenuItemCreateDirectory.setText("Create New Directory");
@@ -141,11 +148,11 @@ public class JFrameMainWindow extends javax.swing.JFrame {
                 jMenuItemCreateDirectoryActionPerformed(evt);
             }
         });
-        jMenu1.add(jMenuItemCreateDirectory);
+        jMenuFile.add(jMenuItemCreateDirectory);
 
-        jMenuBar1.add(jMenu1);
+        jMenuBar1.add(jMenuFile);
 
-        jMenu2.setText("Edit");
+        jMenuEdit.setText("Edit");
 
         jMenuItemFind.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_F, java.awt.event.InputEvent.CTRL_DOWN_MASK));
         jMenuItemFind.setText("Find");
@@ -154,22 +161,29 @@ public class JFrameMainWindow extends javax.swing.JFrame {
                 jMenuItemFindActionPerformed(evt);
             }
         });
-        jMenu2.add(jMenuItemFind);
+        jMenuEdit.add(jMenuItemFind);
 
         jMenuItemCopy.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_C, java.awt.event.InputEvent.CTRL_DOWN_MASK));
         jMenuItemCopy.setText("Copy");
-        jMenu2.add(jMenuItemCopy);
+        jMenuEdit.add(jMenuItemCopy);
 
         jMenuItemMove.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_X, java.awt.event.InputEvent.CTRL_DOWN_MASK));
         jMenuItemMove.setText("Move");
-        jMenu2.add(jMenuItemMove);
-        jMenu2.add(jSeparator2);
+        jMenuEdit.add(jMenuItemMove);
+        jMenuEdit.add(jSeparator2);
 
         jMenuItemRemove.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_DELETE, 0));
         jMenuItemRemove.setText("Remove");
-        jMenu2.add(jMenuItemRemove);
+        jMenuEdit.add(jMenuItemRemove);
 
-        jMenuBar1.add(jMenu2);
+        jMenuBar1.add(jMenuEdit);
+
+        jMenuSettings.setText("Preferences");
+
+        jCheckBoxMenuItemFastCd.setText("Fast Directory Changes");
+        jMenuSettings.add(jCheckBoxMenuItemFastCd);
+
+        jMenuBar1.add(jMenuSettings);
 
         setJMenuBar(jMenuBar1);
 
@@ -184,7 +198,7 @@ public class JFrameMainWindow extends javax.swing.JFrame {
                         .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 388, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
                         .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
-                    .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 852, Short.MAX_VALUE)
+                    .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 888, Short.MAX_VALUE)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jTextFieldCurrentDirectory)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
@@ -203,7 +217,7 @@ public class JFrameMainWindow extends javax.swing.JFrame {
                     .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 421, Short.MAX_VALUE)
                     .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 197, Short.MAX_VALUE)
+                .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 297, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -294,19 +308,28 @@ public class JFrameMainWindow extends javax.swing.JFrame {
     }//GEN-LAST:event_jMenuItemFindActionPerformed
 
     private void jButtonGoDirectoryActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonGoDirectoryActionPerformed
-        if (this.driveManager.changeDirectory(this.jTextFieldCurrentDirectory.getText())) {
-            //Directory change successfull
-            this.jTextFieldCurrentDirectory.setText(this.driveManager.getCurrentDirectory().getRoute());
-            
-            //Now I need to update the tree to change accordingly
-            this.focusNode((DefaultMutableTreeNode)this.jTreeDirectoryTree.getModel().getRoot(),
-                    new DefaultMutableTreeNode(this.driveManager.getCurrentDirectory()));
-            
+        System.out.println("Create new directory in current virtual disk");
+        if (driveManager == null) {
+            JOptionPane.showMessageDialog(null, "Please first create a virtual drive");
         } else {
-            //Error
-            JOptionPane.showMessageDialog(null, "Couldn't change to directory");
+            if (this.driveManager.changeDirectory(this.jTextFieldCurrentDirectory.getText())) {
+                //Directory change successfull
+                this.jTextFieldCurrentDirectory.setText(this.driveManager.getCurrentDirectory().getRoute());
+
+                //Now I need to update the tree to change accordingly
+                this.focusNode((DefaultMutableTreeNode)this.jTreeDirectoryTree.getModel().getRoot(),
+                        new DefaultMutableTreeNode(this.driveManager.getCurrentDirectory()));
+
+            } else {
+                //Error
+                JOptionPane.showMessageDialog(null, "Couldn't change to directory");
+            }
         }
     }//GEN-LAST:event_jButtonGoDirectoryActionPerformed
+
+    private void jTextFieldCurrentDirectoryActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextFieldCurrentDirectoryActionPerformed
+        this.jButtonGoDirectory.doClick();
+    }//GEN-LAST:event_jTextFieldCurrentDirectoryActionPerformed
 
     /**
      * @param args the command line arguments
@@ -413,9 +436,10 @@ public class JFrameMainWindow extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButtonGoDirectory;
-    private javax.swing.JMenu jMenu1;
-    private javax.swing.JMenu jMenu2;
+    private javax.swing.JCheckBoxMenuItem jCheckBoxMenuItemFastCd;
     private javax.swing.JMenuBar jMenuBar1;
+    private javax.swing.JMenu jMenuEdit;
+    private javax.swing.JMenu jMenuFile;
     private javax.swing.JMenuItem jMenuItemCopy;
     private javax.swing.JMenuItem jMenuItemCreateDirectory;
     private javax.swing.JMenuItem jMenuItemCreateFile;
@@ -423,6 +447,7 @@ public class JFrameMainWindow extends javax.swing.JFrame {
     private javax.swing.JMenuItem jMenuItemFind;
     private javax.swing.JMenuItem jMenuItemMove;
     private javax.swing.JMenuItem jMenuItemRemove;
+    private javax.swing.JMenu jMenuSettings;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
