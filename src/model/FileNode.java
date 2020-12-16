@@ -101,7 +101,7 @@ public class FileNode extends FileSystemNode{
         if (getClass() != obj.getClass()) {
             return false;
         }
-        final DirectoryNode other = (DirectoryNode) obj;
+        final FileNode other = (FileNode) obj;
         return Objects.equals(this.getRoute(), other.getRoute());
     }
 
