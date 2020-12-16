@@ -200,7 +200,7 @@ public class DriveManager {
         int counter = 0;
         FileSector pointer = fileNode.getBegin();
         while (pointer != null){
-            for (int i = 0; i < this.sectorSize; i++) {
+            for (int i = 0; i < this.sectorSize && (counter * sectorSize) + i < fileNode.getSize(); i++) {
                 contents[(counter * sectorSize) + i] =
                         this.diskContents[pointer.getSectorPointer() + i];
             }
@@ -222,13 +222,13 @@ public class DriveManager {
         int amountToSave = Math.min(data.length, fileNode.getSize()),
                 counter = 0;
         
-        //While I'm missing some characters to save
+        //While I'm missing some pointers
         while(pointer != null){
         //while(counter < amountToSave){
             
             //Move current remaining data into the sector
-            DriveManager.copyArrayContents(this.diskContents, pointer.getSectorPointer(), data, counter, this.sectorSize);
-            counter += this.sectorSize;
+            DriveManager.copyArrayContents(this.diskContents, pointer.getSectorPointer(), data, counter, this.sectorSize - ((counter + sectorSize) - amountToSave));
+            counter += this.sectorSize - ((counter + sectorSize) - amountToSave);
             pointer = pointer.getNextSector();
         }
     }
