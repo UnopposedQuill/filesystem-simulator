@@ -160,20 +160,6 @@ public class DriveManager {
         }
     }
     
-    /**
-     * Checks if each element in array is blank, if it is returns true
-     * @param array An array from which all its elements will be checked
-     * @return True should every character in array is blank
-     */
-    private static boolean isBlank(char [] array){
-        for (int i = 0; i < array.length; i++) {
-            if (array[i] != 0) {
-                return false;//Found a non-blank character
-            }
-        }
-        return false;
-    }
-    
     public void createFile(int fileSize, String extension, String name){
         //First I need to allocate enough sectors for this file
         int sectorAmount = (int)Math.ceil((double)fileSize/sectorSize);
@@ -273,5 +259,14 @@ public class DriveManager {
                 fileSystemNode.parent.getChildren().remove(fileSystemNode);
             }
         }
+    }
+    
+    /**
+     * Returns whether the specified sector is free
+     * @param sector The sector to be evaluated
+     * @return True if the sector is free
+     */
+    public boolean isSectorFree(int sector){
+        return this.ocuppiedSectors[sector];
     }
 }

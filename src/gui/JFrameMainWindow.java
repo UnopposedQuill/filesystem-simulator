@@ -4,6 +4,7 @@ package gui;
 import java.io.IOException;
 import java.util.Collections;
 import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
@@ -11,7 +12,6 @@ import javax.swing.tree.TreePath;
 import model.DirectoryNode;
 import model.DriveManager;
 import model.FileNode;
-import model.FileSector;
 import model.FileSystemNode;
 
 /**
@@ -683,23 +683,23 @@ public class JFrameMainWindow extends javax.swing.JFrame {
     public void updateDiskContents(){
         //Need to split the file information into the column count
             
-            int rowCount = (int)Math.ceil((double)this.driveManager.getContent().length/this.diskContentsColumnCount);
-            Integer [][] data = new Integer[rowCount][this.diskContentsColumnCount];
-            for (int i = 0; i < this.driveManager.getContent().length; i++) {
-                data[i/this.diskContentsColumnCount][i%this.diskContentsColumnCount] = (int)this.driveManager.getContent()[i];
-            }
-            
-            //Now that I have the data, I need the columns
-            String[] columnNames = new String[this.diskContentsColumnCount];
-            for (int i = 0; i < this.diskContentsColumnCount; i++) {
-                columnNames[i] = "Title " + String.valueOf(i + 1);
-            }
+        int rowCount = (int)Math.ceil((double)this.driveManager.getContent().length/this.diskContentsColumnCount);
+        Integer [][] data = new Integer[rowCount][this.diskContentsColumnCount];
+        for (int i = 0; i < this.driveManager.getContent().length; i++) {
+            data[i/this.diskContentsColumnCount][i%this.diskContentsColumnCount] = (int)this.driveManager.getContent()[i];
+        }
 
-            //Now I can build a model using the data
-            DefaultTableModel defaultTableModel = new DefaultTableModel(data, columnNames);
-            
-            //Set the model into the table
-            this.jTableVirtualDriveContents.setModel(defaultTableModel);
+        //Now that I have the data, I need the columns
+        String[] columnNames = new String[this.diskContentsColumnCount];
+        for (int i = 0; i < this.diskContentsColumnCount; i++) {
+            columnNames[i] = "Title " + String.valueOf(i + 1);
+        }
+
+        //Now I can build a model using the data
+        DefaultTableModel defaultTableModel = new DefaultTableModel(data, columnNames);
+
+        //Set the model into the table
+        this.jTableVirtualDriveContents.setModel(defaultTableModel);
     }
     
     private void clearFileContents() {
