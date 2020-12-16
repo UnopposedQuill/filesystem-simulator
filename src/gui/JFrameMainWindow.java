@@ -511,6 +511,7 @@ public class JFrameMainWindow extends javax.swing.JFrame {
         //Remove the node and update the view
         this.driveManager.removeNode(nodeInfo);
         this.updateTree();
+        this.clearFileContents();
     }//GEN-LAST:event_jMenuItemRemoveActionPerformed
 
     /**
@@ -671,16 +672,7 @@ public class JFrameMainWindow extends javax.swing.JFrame {
             this.jLabelNodeName.setText("Directory: " + directoryNode.getName());
             
             //Update the content table to an empty table
-            String[] columnNames = new String[this.fileEditorColumnCount];
-            for (int i = 0; i < this.fileEditorColumnCount; i++) {
-                columnNames[i] = "Title " + String.valueOf(i + 1);
-            }
-
-            this.jTableFileContents.setModel(new DefaultTableModel(new Object[0][0], columnNames));
-            
-            //And disable the editing buttons
-            this.jButtonSaveChanges.setEnabled(false);
-            this.jButtonDiscard.setEnabled(false);
+            this.clearFileContents();
         }
     }
     
@@ -707,6 +699,20 @@ public class JFrameMainWindow extends javax.swing.JFrame {
             
             //Set the model into the table
             this.jTableVirtualDriveContents.setModel(defaultTableModel);
+    }
+    
+    private void clearFileContents() {
+        
+        String[] columnNames = new String[this.fileEditorColumnCount];
+        for (int i = 0; i < this.fileEditorColumnCount; i++) {
+            columnNames[i] = "Title " + String.valueOf(i + 1);
+        }
+        
+        this.jTableFileContents.setModel(new DefaultTableModel(new Object[0][0], columnNames));
+            
+        //And disable the editing buttons
+        this.jButtonSaveChanges.setEnabled(false);
+        this.jButtonDiscard.setEnabled(false);
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

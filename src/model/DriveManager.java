@@ -184,6 +184,10 @@ public class DriveManager {
             sectors[i] = this.getFirstEmptySector();
             //I need to hook each sector to its next one
             if (i > 0) sectors[i-1].setNextSector(sectors[i]);
+            
+            for (int j = 0; j < this.sectorSize; j++) {
+                this.diskContents[sectors[i].getSectorPointer() + j] = 0;
+            }
         }
         
         //Lastly I can now insert it
@@ -256,6 +260,14 @@ public class DriveManager {
             }
             //I cannot ever remove the root file, but I can remove the contents in it
             if (fileSystemNode != this.rootNode){
+                //Now I have to free its data
+                FileNode fileNode = (FileNode) fileSystemNode;
+                FileSector pointer = fileNode.getBegin();
+                while(pointer != null){
+                    this.freeSector(pointer);
+                    pointer = pointer.getNextSector();
+                }
+                
                 fileSystemNode.parent.getChildren().remove(fileSystemNode);
             }
         }
