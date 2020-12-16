@@ -111,6 +111,7 @@ public class JFrameMainWindow extends javax.swing.JFrame {
             }
         });
         jTableFileContents.setShowGrid(true);
+        jTableFileContents.setTableHeader(null);
         jScrollPane2.setViewportView(jTableFileContents);
 
         jScrollPane3.setVerticalScrollBarPolicy(javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
@@ -126,6 +127,7 @@ public class JFrameMainWindow extends javax.swing.JFrame {
             }
         ));
         jTableVirtualDriveContents.setShowGrid(true);
+        jTableVirtualDriveContents.setTableHeader(null);
         jScrollPane3.setViewportView(jTableVirtualDriveContents);
 
         jButtonGoDirectory.setText("Go");
@@ -306,6 +308,7 @@ public class JFrameMainWindow extends javax.swing.JFrame {
             
             this.jTextFieldCurrentDirectory.setText("/");
             this.updateTree();
+            this.updateDiskContents();
         } catch (NumberFormatException ex){
             java.util.logging.Logger.getLogger(JFrameMainWindow.class.getName()).log(java.util.logging.Level.WARNING, "Number couldn't be parsed", ex);
         } catch (IOException ex){
@@ -336,6 +339,7 @@ public class JFrameMainWindow extends javax.swing.JFrame {
                             this.updateTree();
                             this.focusNode((DefaultMutableTreeNode)this.jTreeDirectoryTree.getModel().getRoot(),
                                     new DefaultMutableTreeNode(this.driveManager.getCurrentDirectory()));
+                            this.updateDiskContents();
                         }
                     }
                 }
@@ -449,6 +453,7 @@ public class JFrameMainWindow extends javax.swing.JFrame {
 
                 this.driveManager.saveData(fileNode, data);
                 this.updateFileContents(nodeInfo);
+                this.updateDiskContents();
 
                 //Add a confirmation message
                 JOptionPane.showMessageDialog(null, "Contents Saved");
