@@ -11,6 +11,7 @@ import javax.swing.tree.TreePath;
 import model.DirectoryNode;
 import model.DriveManager;
 import model.FileNode;
+import model.FileSector;
 import model.FileSystemNode;
 
 /**
@@ -21,11 +22,14 @@ public class JFrameMainWindow extends javax.swing.JFrame {
 
     private DriveManager driveManager = null;
     
+    private int fileEditorColumnCount;
+    
     /**
      * Creates new form JFrameMainWindow
      */
     public JFrameMainWindow() {
         initComponents();
+        this.fileEditorColumnCount = this.jTableFileContents.getColumnCount();
     }
 
     /**
@@ -409,12 +413,44 @@ public class JFrameMainWindow extends javax.swing.JFrame {
             this.jLabelCreationDate.setText(fileNode.getCreationDate().toString());
             this.jLabelModificationDate.setText(fileNode.getModificationDate().toString());
             
+            //Need to split the file information into the column count
+            char [] contents = this.driveManager.getData(fileNode);
+//            for (int i = 0; i < contents.length; i++) {
+//                System.out.print((int) contents[i]);
+//            }
+            
+            int rowCount = (int)Math.ceil((double)contents.length/this.fileEditorColumnCount);
+            Integer [][] data = new Integer[rowCount][this.fileEditorColumnCount];
+            for (int i = 0; i < contents.length; i++) {
+                data[i/this.fileEditorColumnCount][i%this.fileEditorColumnCount] = (int)contents[i];
+            }
+            
+            //Now that I have the data, I need the columns
+            String[] columnNames = new String[this.fileEditorColumnCount];
+            for (int i = 0; i < this.fileEditorColumnCount; i++) {
+                columnNames[i] = "Title " + String.valueOf(i + 1);
+            }
+
+            //Now I can build a model using the data
+            DefaultTableModel defaultTableModel = new DefaultTableModel(data, columnNames);
+            
+            //And finally set the model into the table
+            this.jTableFileContents.setModel(defaultTableModel);
+            
         } else if (nodeInfo instanceof DirectoryNode) {
             DirectoryNode directoryNode = (DirectoryNode) nodeInfo;
             this.jLabelNodeName.setText("Directory: " + directoryNode.getName());
             this.jLabelFileSize.setText(String.valueOf(directoryNode.getSize()) + " B");
             this.jLabelCreationDate.setText(directoryNode.getCreationDate().toString());
             this.jLabelModificationDate.setText(directoryNode.getModificationDate().toString());
+            
+            //Update the content table to an empty table
+            String[] columnNames = new String[this.fileEditorColumnCount];
+            for (int i = 0; i < this.fileEditorColumnCount; i++) {
+                columnNames[i] = "Title " + String.valueOf(i + 1);
+            }
+
+            this.jTableFileContents.setModel(new DefaultTableModel(new Object[0][0], columnNames));
         }
         
     }//GEN-LAST:event_jTreeDirectoryTreeValueChanged

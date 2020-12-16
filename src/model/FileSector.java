@@ -18,6 +18,10 @@ public class FileSector {
         this.nextSector = nextSector;
     }
 
+    /**
+     * Returns a pointer to the data corresponding to this sector
+     * @return An integer representing the location of the data of the sector
+     */
     public int getSectorPointer() {
         return sectorPointer;
     }

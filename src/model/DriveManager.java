@@ -188,4 +188,26 @@ public class DriveManager {
         //Lastly I can now insert it
         this.currentDirectory.addChildren(new FileNode(sectors[0], sectors[sectorAmount-1], fileSize, extension, name, currentDirectory));
     }
+    
+    /**
+     * Will return an array with the contents of a given fileNode
+     * @param fileNode The fileNode from which to retrieve the contents
+     * @return An array with the information
+     */
+    public char[] getData(FileNode fileNode){
+        
+        char[] contents = new char[fileNode.getSize()];
+        int counter = 0;
+        FileSector pointer = fileNode.getBegin();
+        while (pointer != null){
+            for (int i = 0; i < this.sectorSize; i++) {
+                contents[(counter * sectorSize) + i] =
+                        this.diskContents[pointer.getSectorPointer() + i];
+            }
+            counter++;
+            pointer = pointer.getNextSector();
+        } 
+        
+        return contents;
+    }
 }
