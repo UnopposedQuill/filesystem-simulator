@@ -512,6 +512,7 @@ public class JFrameMainWindow extends javax.swing.JFrame {
         this.driveManager.removeNode(nodeInfo);
         this.updateTree();
         this.clearFileContents();
+        this.clearFileData();
     }//GEN-LAST:event_jMenuItemRemoveActionPerformed
 
     /**
@@ -713,6 +714,14 @@ public class JFrameMainWindow extends javax.swing.JFrame {
         //And disable the editing buttons
         this.jButtonSaveChanges.setEnabled(false);
         this.jButtonDiscard.setEnabled(false);
+    }
+    
+    private void clearFileData(){
+        this.jLabelNodeName.setText("<No File Selected>");
+        this.jLabelFileSize.setText("N/A B");
+        this.jLabelCreationDate.setText("N/A");
+        this.jLabelModificationDate.setText("N/A");
+        this.jLabelParentElement.setText("N/A");
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
