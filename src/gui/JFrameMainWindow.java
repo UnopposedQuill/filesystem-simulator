@@ -379,13 +379,17 @@ public class JFrameMainWindow extends javax.swing.JFrame {
                         if (!fileSize.equals(JOptionPane.CANCEL_OPTION)) {
 
                             //Use the input info to create the file
-                            driveManager.createFile(Integer.parseInt(fileSize.toString()), fileExtension.toString(), fileName.toString());
+                            if(driveManager.createFile(Integer.parseInt(fileSize.toString()), fileExtension.toString(), fileName.toString())){
 
-                            //Now I need to update the tree to change accordingly
-                            this.updateTree();
-                            this.focusNode((DefaultMutableTreeNode)this.jTreeDirectoryTree.getModel().getRoot(),
-                                    new DefaultMutableTreeNode(this.driveManager.getCurrentDirectory()));
-                            this.updateDiskContents();
+                                //Now I need to update the tree to change accordingly
+                                this.updateTree();
+                                this.focusNode((DefaultMutableTreeNode)this.jTreeDirectoryTree.getModel().getRoot(),
+                                        new DefaultMutableTreeNode(this.driveManager.getCurrentDirectory()));
+                                this.updateDiskContents();
+                            } else {
+                                //Notify failure on creation
+                                JOptionPane.showMessageDialog(null, "Couldn't create file, either it already exists or no space available");
+                            }
                         }
                     }
                 }
@@ -409,13 +413,17 @@ public class JFrameMainWindow extends javax.swing.JFrame {
                 
                 //Check for valid name
                 if (!name.equals("")) {
-                    driveManager.makeDirectory((String)name);
-                    System.out.println("New Directory created");
-                    
-                    //Now I need to update the tree to change accordingly
-                    this.updateTree();
-                    this.focusNode((DefaultMutableTreeNode)this.jTreeDirectoryTree.getModel().getRoot(),
-                            new DefaultMutableTreeNode(this.driveManager.getCurrentDirectory()));
+                    if (driveManager.makeDirectory((String)name)){
+                        System.out.println("New Directory created");
+
+                        //Now I need to update the tree to change accordingly
+                        this.updateTree();
+                        this.focusNode((DefaultMutableTreeNode)this.jTreeDirectoryTree.getModel().getRoot(),
+                                new DefaultMutableTreeNode(this.driveManager.getCurrentDirectory()));
+                    } else {
+                        //Notify failure on creation
+                        JOptionPane.showMessageDialog(null, "Couldn't make new directory, already exists");
+                    }
                 }
             }
         }

@@ -63,9 +63,19 @@ public class DriveManager {
     /**
      * This method will take care of inserting a new directory inside the current directory
      * @param name The name of the new directory
+     * @return 
      */
-    public void makeDirectory(String name){
-        this.currentDirectory.addChildren(new DirectoryNode(currentDirectory, name));
+    public boolean makeDirectory(String name){
+        //First I need to check if there's a file with that name and extension
+        DirectoryNode newDirectoryNode = new DirectoryNode(this.currentDirectory, name);
+        
+        if (this.currentDirectory.getChildren().contains(newDirectoryNode)){
+            //It exists, return failure
+            return false;
+        }
+        
+        this.currentDirectory.addChildren(newDirectoryNode);
+        return true;
     }
     
     /**
@@ -160,7 +170,14 @@ public class DriveManager {
         }
     }
     
-    public void createFile(int fileSize, String extension, String name){
+    public boolean createFile(int fileSize, String extension, String name){
+        
+        //First I need to check if there's a file with that name and extension
+        if (this.currentDirectory.getChildren().contains(new FileNode(null, null, 0, extension, name, this.currentDirectory))){
+            //It exists, return failure
+            return false;
+        }
+        
         //First I need to allocate enough sectors for this file
         int sectorAmount = (int)Math.ceil((double)fileSize/sectorSize);
         FileSector[] sectors = new FileSector[sectorAmount];
@@ -168,6 +185,15 @@ public class DriveManager {
         //Populate with empty sectors
         for (int i = 0; i < sectors.length; i++) {
             sectors[i] = this.getFirstEmptySector();
+            if (sectors[i] == null) {
+                //Didn't find available space
+                //I need to free previous sectors
+                for (int j = 0; j < sectors.length - 1; j++) {
+                    this.freeSector(sectors[j]);
+                }
+                return false;
+            }
+            
             //I need to hook each sector to its next one
             if (i > 0) sectors[i-1].setNextSector(sectors[i]);
             
@@ -178,6 +204,7 @@ public class DriveManager {
         
         //Lastly I can now insert it
         this.currentDirectory.addChildren(new FileNode(sectors[0], sectors[sectorAmount-1], fileSize, extension, name, this.currentDirectory));
+        return true;
     }
     
     /**
