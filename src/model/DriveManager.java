@@ -165,7 +165,7 @@ public class DriveManager {
     
     private static void copyArrayContents(char[] destination, int destOffset, char[] source, int sourceOffset, int amount){
         int initialPosition = 0;
-        while(amount-- > 0){
+        while(amount-- > 0 && sourceOffset < source.length){
             destination[(initialPosition++) + destOffset] = source[sourceOffset++];
         }
     }
@@ -236,16 +236,16 @@ public class DriveManager {
      */
     public void saveData(FileNode fileNode, char[] data){
         FileSector pointer = fileNode.getBegin();
-        //I will use the min here, but it should be the same
-        int amountToSave = Math.min(data.length, fileNode.getSize()),
-                counter = 0;
+        int counter = 0;
         
-        //While I'm missing some pointers
+        //While I'm missing some sector pointers
         while(pointer != null){
             
             //Move current remaining data into the sector
-            DriveManager.copyArrayContents(this.diskContents, pointer.getSectorPointer(), data, counter, this.sectorSize - ((counter + sectorSize) - amountToSave));
-            counter += this.sectorSize - ((counter + sectorSize) - amountToSave);
+            DriveManager.copyArrayContents(this.diskContents, pointer.getSectorPointer(), data, counter, this.sectorSize);
+            counter += this.sectorSize;
+            
+            //Proceed to next sector
             pointer = pointer.getNextSector();
         }
         
