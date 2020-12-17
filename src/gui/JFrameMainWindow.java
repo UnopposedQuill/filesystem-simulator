@@ -1,9 +1,12 @@
 
 package gui;
 
+import java.awt.Color;
+import java.awt.Component;
 import java.io.IOException;
 import java.util.Collections;
 import javax.swing.JOptionPane;
+import javax.swing.JTable;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.tree.DefaultMutableTreeNode;
@@ -57,6 +60,9 @@ public class JFrameMainWindow extends javax.swing.JFrame {
         jLabelCreationDate = new javax.swing.JLabel();
         jLabelModificationDate = new javax.swing.JLabel();
         jLabelParentElement = new javax.swing.JLabel();
+        jLabelFileEditor = new javax.swing.JLabel();
+        jLabelDiskContents = new javax.swing.JLabel();
+        jLabelFileSystemTree = new javax.swing.JLabel();
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenuFile = new javax.swing.JMenu();
         jMenuItemCreateVirtualDisk = new javax.swing.JMenuItem();
@@ -74,7 +80,7 @@ public class JFrameMainWindow extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-        jTextFieldCurrentDirectory.setText("Disco no inicializado");
+        jTextFieldCurrentDirectory.setText("Disk not initialized");
         jTextFieldCurrentDirectory.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jTextFieldCurrentDirectoryActionPerformed(evt);
@@ -83,6 +89,7 @@ public class JFrameMainWindow extends javax.swing.JFrame {
 
         javax.swing.tree.DefaultMutableTreeNode treeNode1 = new javax.swing.tree.DefaultMutableTreeNode("root");
         jTreeDirectoryTree.setModel(new javax.swing.tree.DefaultTreeModel(treeNode1));
+        jTreeDirectoryTree.setEnabled(false);
         jTreeDirectoryTree.addTreeSelectionListener(new javax.swing.event.TreeSelectionListener() {
             public void valueChanged(javax.swing.event.TreeSelectionEvent evt) {
                 jTreeDirectoryTreeValueChanged(evt);
@@ -129,6 +136,11 @@ public class JFrameMainWindow extends javax.swing.JFrame {
         ));
         jTableVirtualDriveContents.setShowGrid(true);
         jTableVirtualDriveContents.setTableHeader(null);
+        //For each column in this Table, I need to reset the renderer
+        for(int i = 0; i < this.jTableVirtualDriveContents.getColumnCount();i++){
+            this.jTableVirtualDriveContents.getColumnModel().getColumn(i).setCellRenderer(
+                new ColumnColorRenderer(this.driveManager, this.jTableVirtualDriveContents.getColumnCount()));
+        }
         jScrollPane3.setViewportView(jTableVirtualDriveContents);
 
         jButtonGoDirectory.setText("Go");
@@ -168,6 +180,12 @@ public class JFrameMainWindow extends javax.swing.JFrame {
 
         jLabelParentElement.setHorizontalAlignment(javax.swing.SwingConstants.TRAILING);
         jLabelParentElement.setText("N/A");
+
+        jLabelFileEditor.setText("File Editor");
+
+        jLabelDiskContents.setText("Disk Contents");
+
+        jLabelFileSystemTree.setText("File Explorer");
 
         jMenuFile.setText("File");
 
@@ -248,30 +266,36 @@ public class JFrameMainWindow extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jScrollPane2)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jTextFieldCurrentDirectory)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(jButtonGoDirectory))
                     .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                            .addComponent(jScrollPane3, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
-                            .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 388, Short.MAX_VALUE))
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 516, Short.MAX_VALUE)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(jLabelDiskContents, javax.swing.GroupLayout.PREFERRED_SIZE, 101, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(0, 0, Short.MAX_VALUE)))
                         .addGap(18, 18, 18)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 482, Short.MAX_VALUE)
+                            .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 586, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabelFileSystemTree, javax.swing.GroupLayout.PREFERRED_SIZE, 72, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                                .addComponent(jLabelNodeName, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(jLabelFileSize, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(jLabelCreationDate, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(jLabelModificationDate, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(jLabelParentElement, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addGroup(layout.createSequentialGroup()
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addGroup(layout.createSequentialGroup()
-                                        .addComponent(jButtonSaveChanges)
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                        .addComponent(jButtonDiscard))
-                                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                                        .addComponent(jLabelNodeName, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 150, Short.MAX_VALUE)
-                                        .addComponent(jLabelFileSize, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                        .addComponent(jLabelCreationDate, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                        .addComponent(jLabelModificationDate, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                        .addComponent(jLabelParentElement, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-                                .addGap(0, 0, Short.MAX_VALUE)))))
+                                .addComponent(jButtonSaveChanges)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(jButtonDiscard))))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jLabelFileEditor)
+                        .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -282,27 +306,32 @@ public class JFrameMainWindow extends javax.swing.JFrame {
                     .addComponent(jTextFieldCurrentDirectory, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jButtonGoDirectory))
                 .addGap(18, 18, 18)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 421, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(jLabelNodeName)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jLabelFileSize)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jLabelCreationDate)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jLabelModificationDate)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jLabelParentElement)))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 12, Short.MAX_VALUE)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jButtonSaveChanges)
-                            .addComponent(jButtonDiscard)))
-                    .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 291, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addComponent(jLabelFileEditor)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 375, Short.MAX_VALUE)
+                .addGap(18, 18, 18)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabelNodeName)
+                    .addComponent(jLabelDiskContents)
+                    .addComponent(jLabelFileSystemTree))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(jScrollPane1)
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                        .addGroup(layout.createSequentialGroup()
+                            .addComponent(jLabelFileSize)
+                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                            .addComponent(jLabelCreationDate)
+                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                            .addComponent(jLabelModificationDate)
+                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                            .addComponent(jLabelParentElement)
+                            .addGap(18, 18, 18)
+                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                .addComponent(jButtonSaveChanges)
+                                .addComponent(jButtonDiscard))
+                            .addGap(265, 265, 265))
+                        .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)))
                 .addContainerGap())
         );
 
@@ -318,11 +347,14 @@ public class JFrameMainWindow extends javax.swing.JFrame {
             diskSize = Integer.parseInt(JOptionPane.showInputDialog("Please enter number of bytes for the virtual disk", 4098));
             sectorSize = Integer.parseInt(JOptionPane.showInputDialog("Please enter number of bytes for the virtual disk", 8));
 
+            //Initialize the drive manager
             this.driveManager = new DriveManager(diskSize, sectorSize);
             
             this.jTextFieldCurrentDirectory.setText("/root/");
+            this.jTreeDirectoryTree.setEnabled(true);
             this.updateTree();
             this.updateDiskContents();
+            
         } catch (NumberFormatException ex){
             java.util.logging.Logger.getLogger(JFrameMainWindow.class.getName()).log(java.util.logging.Level.WARNING, "Number couldn't be parsed", ex);
         } catch (IOException ex){
@@ -418,16 +450,21 @@ public class JFrameMainWindow extends javax.swing.JFrame {
     }//GEN-LAST:event_jTextFieldCurrentDirectoryActionPerformed
 
     private void jTreeDirectoryTreeValueChanged(javax.swing.event.TreeSelectionEvent evt) {//GEN-FIRST:event_jTreeDirectoryTreeValueChanged
-        DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode) 
-                this.jTreeDirectoryTree.getLastSelectedPathComponent();
+        System.out.println("Create new directory in current virtual disk");
+        if (driveManager == null) {
+            JOptionPane.showMessageDialog(null, "Please first create a virtual drive");
+        } else {
+            DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode) 
+                    this.jTreeDirectoryTree.getLastSelectedPathComponent();
 
-        //If selection changed into none
-        if (selectedNode == null) return;
+            //If selection changed into none
+            if (selectedNode == null) return;
 
-        //There's a node selected
-        FileSystemNode nodeInfo = (FileSystemNode)selectedNode.getUserObject();
+            //There's a node selected
+            FileSystemNode nodeInfo = (FileSystemNode)selectedNode.getUserObject();
 
-        this.updateFileContents(nodeInfo);
+            this.updateFileContents(nodeInfo);
+        }
     }//GEN-LAST:event_jTreeDirectoryTreeValueChanged
 
     private void jButtonSaveChangesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonSaveChangesActionPerformed
@@ -536,13 +573,48 @@ public class JFrameMainWindow extends javax.swing.JFrame {
         }
         //</editor-fold>
         
-        //</editor-fold>
-
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(() -> {
             new JFrameMainWindow().setVisible(true);
         });
     }
+
+    // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton jButtonDiscard;
+    private javax.swing.JButton jButtonGoDirectory;
+    private javax.swing.JButton jButtonSaveChanges;
+    private javax.swing.JCheckBoxMenuItem jCheckBoxMenuItemFastCd;
+    private javax.swing.JLabel jLabelCreationDate;
+    private javax.swing.JLabel jLabelDiskContents;
+    private javax.swing.JLabel jLabelFileEditor;
+    private javax.swing.JLabel jLabelFileSize;
+    private javax.swing.JLabel jLabelFileSystemTree;
+    private javax.swing.JLabel jLabelModificationDate;
+    private javax.swing.JLabel jLabelNodeName;
+    private javax.swing.JLabel jLabelParentElement;
+    private javax.swing.JMenuBar jMenuBar1;
+    private javax.swing.JMenu jMenuEdit;
+    private javax.swing.JMenu jMenuFile;
+    private javax.swing.JMenuItem jMenuItemCopy;
+    private javax.swing.JMenuItem jMenuItemCreateDirectory;
+    private javax.swing.JMenuItem jMenuItemCreateFile;
+    private javax.swing.JMenuItem jMenuItemCreateVirtualDisk;
+    private javax.swing.JMenuItem jMenuItemFind;
+    private javax.swing.JMenuItem jMenuItemMove;
+    private javax.swing.JMenuItem jMenuItemRemove;
+    private javax.swing.JMenu jMenuSettings;
+    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JScrollPane jScrollPane3;
+    private javax.swing.JPopupMenu.Separator jSeparator1;
+    private javax.swing.JPopupMenu.Separator jSeparator2;
+    private javax.swing.JTable jTableFileContents;
+    private javax.swing.JTable jTableVirtualDriveContents;
+    private javax.swing.JTextField jTextFieldCurrentDirectory;
+    private javax.swing.JTree jTreeDirectoryTree;
+    // End of variables declaration//GEN-END:variables
+
+    //<editor-fold defaultstate="collapsed" desc="Custom GUI Methods and classes">
     
     /**
      * This function will update the tree view to the current state of the program
@@ -682,7 +754,7 @@ public class JFrameMainWindow extends javax.swing.JFrame {
      */
     public void updateDiskContents(){
         //Need to split the file information into the column count
-            
+        
         int rowCount = (int)Math.ceil((double)this.driveManager.getContent().length/this.diskContentsColumnCount);
         Integer [][] data = new Integer[rowCount][this.diskContentsColumnCount];
         for (int i = 0; i < this.driveManager.getContent().length; i++) {
@@ -700,6 +772,12 @@ public class JFrameMainWindow extends javax.swing.JFrame {
 
         //Set the model into the table
         this.jTableVirtualDriveContents.setModel(defaultTableModel);
+        
+        //For each column in this Table, I need to reset the renderer each time the model changes
+        for(int i = 0; i < this.jTableVirtualDriveContents.getColumnCount();i++){
+            this.jTableVirtualDriveContents.getColumnModel().getColumn(i).setCellRenderer(
+                    new ColumnColorRenderer(this.driveManager, this.jTableVirtualDriveContents.getColumnCount()));
+        }
     }
     
     private void clearFileContents() {
@@ -723,36 +801,32 @@ public class JFrameMainWindow extends javax.swing.JFrame {
         this.jLabelModificationDate.setText("N/A");
         this.jLabelParentElement.setText("N/A");
     }
-
-    // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton jButtonDiscard;
-    private javax.swing.JButton jButtonGoDirectory;
-    private javax.swing.JButton jButtonSaveChanges;
-    private javax.swing.JCheckBoxMenuItem jCheckBoxMenuItemFastCd;
-    private javax.swing.JLabel jLabelCreationDate;
-    private javax.swing.JLabel jLabelFileSize;
-    private javax.swing.JLabel jLabelModificationDate;
-    private javax.swing.JLabel jLabelNodeName;
-    private javax.swing.JLabel jLabelParentElement;
-    private javax.swing.JMenuBar jMenuBar1;
-    private javax.swing.JMenu jMenuEdit;
-    private javax.swing.JMenu jMenuFile;
-    private javax.swing.JMenuItem jMenuItemCopy;
-    private javax.swing.JMenuItem jMenuItemCreateDirectory;
-    private javax.swing.JMenuItem jMenuItemCreateFile;
-    private javax.swing.JMenuItem jMenuItemCreateVirtualDisk;
-    private javax.swing.JMenuItem jMenuItemFind;
-    private javax.swing.JMenuItem jMenuItemMove;
-    private javax.swing.JMenuItem jMenuItemRemove;
-    private javax.swing.JMenu jMenuSettings;
-    private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JScrollPane jScrollPane2;
-    private javax.swing.JScrollPane jScrollPane3;
-    private javax.swing.JPopupMenu.Separator jSeparator1;
-    private javax.swing.JPopupMenu.Separator jSeparator2;
-    private javax.swing.JTable jTableFileContents;
-    private javax.swing.JTable jTableVirtualDriveContents;
-    private javax.swing.JTextField jTextFieldCurrentDirectory;
-    private javax.swing.JTree jTreeDirectoryTree;
-    // End of variables declaration//GEN-END:variables
+    
+    private class ColumnColorRenderer extends DefaultTableCellRenderer{
+        
+        //The drive that this renderer will use to tell whether the sector is free
+        private final DriveManager driveManager;
+        private final int diskContentsColumnCount;
+        
+        public ColumnColorRenderer(DriveManager driveManager, int diskContentsColumnCount){
+            super();
+            this.driveManager = driveManager;
+            this.diskContentsColumnCount = diskContentsColumnCount;
+        }
+        
+        @Override
+        public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected,   boolean hasFocus, int row, int column) {
+            Component cell = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+            if (this.driveManager != null) {
+                if (this.driveManager.isSectorFree((row * diskContentsColumnCount + column) / this.driveManager.getSectorSize())) {
+                    cell.setBackground(Color.GREEN);
+                } else {
+                    cell.setBackground(Color.RED);
+                }
+            }
+            return cell;
+        }
+    }
+    
+    //</editor-fold>
 }

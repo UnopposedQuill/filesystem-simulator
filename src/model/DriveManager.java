@@ -267,6 +267,15 @@ public class DriveManager {
      * @return True if the sector is free
      */
     public boolean isSectorFree(int sector){
-        return this.ocuppiedSectors[sector];
+        return !this.ocuppiedSectors[sector];
+    }
+
+    /**
+     * Returns an int representation of the current sector size in this
+     * drive manager
+     * @return An integer representing the current sector size
+     */
+    public int getSectorSize() {
+        return sectorSize;
     }
 }
