@@ -193,8 +193,7 @@ public class DriveManager {
     public FileNode createFile(int fileSize, String extension, String name){
         
         //First I need to check if there's a file with that name and extension
-        if (this.currentDirectory.getChildren().contains(new FileNode(null, null, 0, extension, name, this.currentDirectory))){
-            //It exists, return failure
+        if (this.fileExists(name, extension)) {
             return null;
         }
         
@@ -366,9 +365,12 @@ public class DriveManager {
     
     public boolean importFile(File importingFile){
         
-        //Supposedly, there's at least a / right before the file name
+        //Supposedly, there's at least a \ right before the file name
         String name = importingFile.getName().substring(importingFile.getName().lastIndexOf('\\') + 1, importingFile.getName().lastIndexOf('.')),
                extension = importingFile.getName().substring(importingFile.getName().lastIndexOf('.') + 1);
+        
+        //File already exists
+        if (this.fileExists(name, extension)) return false;
         
         //Create the fileNode, so I can start adding new bytes later
         FileSector fileSector = this.getFirstEmptySector();
@@ -444,5 +446,9 @@ public class DriveManager {
         } catch (IOException ex) {
             Logger.getLogger(DriveManager.class.getName()).log(Level.SEVERE, null, ex);
         }
+    }
+    
+    public boolean fileExists(String name, String extension){
+        return this.currentDirectory.getChildren().contains(new FileNode(null, null, 0, extension, name, this.currentDirectory));
     }
 }
