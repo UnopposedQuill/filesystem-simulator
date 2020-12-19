@@ -440,6 +440,10 @@ public class DriveManager {
         return true;//Operation succesful
     }
     
+    /**
+     * This method will update the disk file to match the contents of the
+     * program
+     */
     private void updateDiskContents(){
         //Then write the current contents to it
         try (FileWriter fw = new FileWriter(diskFile)) {

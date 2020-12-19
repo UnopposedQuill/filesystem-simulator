@@ -66,6 +66,7 @@ public class FileNode extends FileSystemNode{
      * This will output a representation of the directory of this directory node
      * @return A string separated by / representing the route of this directory
      */
+    @Override
     public String getRoute() {
         DirectoryNode ptr = this.parent;
         String directoryRoute = "/" + this.getName() + "." + this.extension;
