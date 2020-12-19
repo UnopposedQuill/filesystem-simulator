@@ -268,6 +268,11 @@ public class JFrameMainWindow extends javax.swing.JFrame {
         jMenuItemCopy.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_C, java.awt.event.InputEvent.CTRL_DOWN_MASK));
         jMenuItemCopy.setText("Copy");
         jMenuItemCopy.setEnabled(false);
+        jMenuItemCopy.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItemCopyActionPerformed(evt);
+            }
+        });
         jMenuEdit.add(jMenuItemCopy);
 
         jMenuItemMove.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_X, java.awt.event.InputEvent.CTRL_DOWN_MASK));
@@ -445,7 +450,6 @@ public class JFrameMainWindow extends javax.swing.JFrame {
             //Check for valid name
             if (!name.equals("")) {
                 if (driveManager.makeDirectory((String)name)){
-                    System.out.println("New Directory created");
 
                     //Now I need to update the tree to change accordingly
                     this.updateTree();
@@ -633,9 +637,26 @@ public class JFrameMainWindow extends javax.swing.JFrame {
                 } catch (IOException ex){
                     JOptionPane.showMessageDialog(null, "Failure on export");
                 }
-            }   
+            }
         }
     }//GEN-LAST:event_jMenuItemExportActionPerformed
+
+    private void jMenuItemCopyActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItemCopyActionPerformed
+        //First I'll get the selected file in the UI
+        DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode) 
+                this.jTreeDirectoryTree.getLastSelectedPathComponent();
+
+        //If selection changed into none, for some odd reason
+        if (selectedNode == null) return;
+
+        //There's a file node selected
+        FileSystemNode nodeInfo = (FileSystemNode)selectedNode.getUserObject();
+        
+        this.driveManager.copyFile(nodeInfo);
+        
+        this.updateDiskContents();
+        this.updateTree();
+    }//GEN-LAST:event_jMenuItemCopyActionPerformed
 
     /**
      * @param args the command line arguments
