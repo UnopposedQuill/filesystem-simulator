@@ -131,18 +131,6 @@
             </MenuItem>
           </SubComponents>
         </Menu>
-        <Menu class="javax.swing.JMenu" name="jMenuSettings">
-          <Properties>
-            <Property name="text" type="java.lang.String" value="Preferences"/>
-          </Properties>
-          <SubComponents>
-            <MenuItem class="javax.swing.JCheckBoxMenuItem" name="jCheckBoxMenuItemFastCd">
-              <Properties>
-                <Property name="text" type="java.lang.String" value="Fast Directory Changes"/>
-              </Properties>
-            </MenuItem>
-          </SubComponents>
-        </Menu>
       </SubComponents>
     </Menu>
   </NonVisualComponents>

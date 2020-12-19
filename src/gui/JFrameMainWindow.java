@@ -82,8 +82,6 @@ public class JFrameMainWindow extends javax.swing.JFrame {
         jMenuItemMove = new javax.swing.JMenuItem();
         jSeparator3 = new javax.swing.JPopupMenu.Separator();
         jMenuItemRemove = new javax.swing.JMenuItem();
-        jMenuSettings = new javax.swing.JMenu();
-        jCheckBoxMenuItemFastCd = new javax.swing.JCheckBoxMenuItem();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("File System Simulator");
@@ -299,13 +297,6 @@ public class JFrameMainWindow extends javax.swing.JFrame {
 
         jMenuBar1.add(jMenuEdit);
 
-        jMenuSettings.setText("Preferences");
-
-        jCheckBoxMenuItemFastCd.setText("Fast Directory Changes");
-        jMenuSettings.add(jCheckBoxMenuItemFastCd);
-
-        jMenuBar1.add(jMenuSettings);
-
         setJMenuBar(jMenuBar1);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -475,22 +466,27 @@ public class JFrameMainWindow extends javax.swing.JFrame {
             
             ArrayList<FileSystemNode> results = this.driveManager.findFiles(this.driveManager.getRootDirectory(), (String)input);
             
-            Object selectedResult = JOptionPane.showInputDialog(null, "Search completed, please select one of these options, or cancel to dismiss this search", "Search results", JOptionPane.QUESTION_MESSAGE, null, results.toArray(), results.get(0));
+            if (!results.isEmpty()) {
+                Object selectedResult = JOptionPane.showInputDialog(null, "Search completed, please select one of these options, or cancel to dismiss this search", "Search results", JOptionPane.QUESTION_MESSAGE, null, results.toArray(), results.get(0));
             
-            if (!selectedResult.equals(JOptionPane.CANCEL_OPTION)) {
-                
-                FileSystemNode selectedNode = (FileSystemNode)selectedResult;
-                
-                if (selectedNode instanceof FileNode) {
-                    FileNode fileNode = (FileNode) selectedNode;
-                    this.driveManager.changeDirectory(fileNode.getParent().getRoute());
-                } else {
-                    this.driveManager.changeDirectory(selectedNode.getRoute());
+                if (!selectedResult.equals(JOptionPane.CANCEL_OPTION)) {
+
+                    FileSystemNode selectedNode = (FileSystemNode)selectedResult;
+
+                    if (selectedNode instanceof FileNode) {
+                        FileNode fileNode = (FileNode) selectedNode;
+                        this.driveManager.changeDirectory(fileNode.getParent().getRoute());
+                    } else {
+                        this.driveManager.changeDirectory(selectedNode.getRoute());
+                    }
+
+                    this.updateTree();
+                    this.jTextFieldCurrentDirectory.setText(this.driveManager.getCurrentDirectory().getRoute());
                 }
-                
-                this.updateTree();
-                this.jTextFieldCurrentDirectory.setText(this.driveManager.getCurrentDirectory().getRoute());
+            } else {
+                JOptionPane.showMessageDialog(null, "No results found");
             }
+            
         }
         
     }//GEN-LAST:event_jMenuItemFindActionPerformed
@@ -743,7 +739,6 @@ public class JFrameMainWindow extends javax.swing.JFrame {
     private javax.swing.JButton jButtonDiscard;
     private javax.swing.JButton jButtonGoDirectory;
     private javax.swing.JButton jButtonSaveChanges;
-    private javax.swing.JCheckBoxMenuItem jCheckBoxMenuItemFastCd;
     private javax.swing.JLabel jLabelCreationDate;
     private javax.swing.JLabel jLabelDiskContents;
     private javax.swing.JLabel jLabelFileEditor;
@@ -764,7 +759,6 @@ public class JFrameMainWindow extends javax.swing.JFrame {
     private javax.swing.JMenuItem jMenuItemImport;
     private javax.swing.JMenuItem jMenuItemMove;
     private javax.swing.JMenuItem jMenuItemRemove;
-    private javax.swing.JMenu jMenuSettings;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
