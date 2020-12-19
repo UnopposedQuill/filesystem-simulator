@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -62,8 +63,9 @@ public class DriveManager {
     
     /**
      * This method will take care of inserting a new directory inside the current directory
+     * It will check for existing directories before creating
      * @param name The name of the new directory
-     * @return 
+     * @return True if the creation was succesful, false otherwise
      */
     public boolean makeDirectory(String name){
         //First I need to check if there's a file with that name and extension
@@ -80,6 +82,9 @@ public class DriveManager {
     
     /**
      * This method will take care of changing the currentDirectory
+     * If the route has the form of "/root/subdirectory" then the route
+     * will be taken as a absolute, otherwise it will start navigating through
+     * the current directory's subcontent
      * @param route The route to which change into
      * @return A boolean representing the success of the directory change
      */
@@ -257,10 +262,15 @@ public class DriveManager {
     
     /**
      * This will take care of overwritting the previous data using the new data
+     * If the node is null, it will return false
      * @param fileNode The node whose data will be overwritten
      * @param data The data which will be saved on top of the previous one
+     * @return True in case data was saved
      */
-    public void saveData(FileNode fileNode, char[] data){
+    public boolean saveData(FileNode fileNode, char[] data){
+        
+        if (fileNode == null) return false;
+        
         FileSector pointer = fileNode.getBegin();
         int counter = 0;
         
@@ -280,6 +290,8 @@ public class DriveManager {
         
         //Then update the disk and return
         this.updateDiskContents();
+        
+        return true;
     }
 
     /**
@@ -420,23 +432,12 @@ public class DriveManager {
             return false;
         }
         
-        this.currentDirectory.getChildren().add(fileNode);
+        this.currentDirectory.addChildren(fileNode);
         
         //Then update the disk and return
         this.updateDiskContents();
         
         return true;//Operation succesful
-    }
-    
-    /**
-     * This method will move the given element into another route
-     * @param fileSystemNode The element to be moved
-     * @param newRoute The new route for the element
-     */
-    public void moveFile(FileSystemNode fileSystemNode, String newRoute){
-        
-        //First try to change to the given directory
-        
     }
     
     private void updateDiskContents(){
@@ -448,7 +449,128 @@ public class DriveManager {
         }
     }
     
+    /**
+     * This will check if there exists a file with the given name and extension
+     * inside the current directory
+     * @param name The name of the file
+     * @param extension The extension of the file
+     * @return True if the file exists
+     */
     public boolean fileExists(String name, String extension){
         return this.currentDirectory.getChildren().contains(new FileNode(null, null, 0, extension, name, this.currentDirectory));
+    }
+    
+    /**
+     * This will check if there exists a directory with the given name
+     * inside the current directory
+     * @param name The name of the directory
+     * @return True if the directory exists
+     */
+    public boolean directoryExists(String name){
+        return this.currentDirectory.getChildren().contains(new DirectoryNode(this.currentDirectory, name));
+    }
+    
+    /**
+     * This will copy the given fileSystemNode in the current directory
+     * @param fileSystemNode The node to copy
+     * @return True if the node and any possible subnodes were copied succesfully
+     */
+    public boolean copyFile(FileSystemNode fileSystemNode){
+        
+        if (fileSystemNode instanceof FileNode) {
+            FileNode fileNode = (FileNode) fileSystemNode,
+                    newFileNode = this.createFile(fileNode.getSize(), fileNode.getExtension(), fileNode.getName());
+            
+            return newFileNode != null && this.saveData(newFileNode, this.getData(fileNode));
+        }
+        
+        //It's a directory, I need to keep track of the current directory
+        DirectoryNode previousDirectory = this.currentDirectory;
+        
+        if (fileSystemNode instanceof DirectoryNode) {
+            DirectoryNode directoryNode = (DirectoryNode) fileSystemNode;
+            
+            if (this.makeDirectory(directoryNode.getName())) {
+                //The directory was successfully created, change to the subdirectory
+                this.changeDirectory(directoryNode.getName());
+                
+                //Then copy new children
+                for (FileSystemNode childFileSystemNode : directoryNode.getChildren()) {
+                    if (!this.copyFile(childFileSystemNode)) {
+                        //This copy was not successfull, revert all changes
+                        this.removeNode(this.currentDirectory);
+                    }
+                }
+                
+                //All subnodes copied successfully
+                this.currentDirectory = previousDirectory;
+                return true;
+            }
+            
+        }
+        
+        return false;
+    }
+    
+    /**
+     * This method will move the given element into the current directory
+     * @param fileSystemNode The element to be moved
+     * @param newName The new name for the element
+     * @return True if the operation was successful, false otherwise
+     */
+    public boolean moveElement(FileSystemNode fileSystemNode, String newName){
+        
+        if (fileSystemNode instanceof FileNode) {
+            
+            //A regex for "name.ext" formats
+            if (!newName.matches("\\w(\\w|\\s)*\\.[a-z]{3}")) return false;
+            
+            String name = newName.substring(0, newName.indexOf('.')),
+                   extension = newName.substring(newName.indexOf('.') + 1);
+            
+            //Test if there already exists a file with this name and extension in here
+            if (this.fileExists(name, extension)) return false;
+            
+            FileNode fileNode = (FileNode) fileSystemNode;
+            fileNode.setName(name);
+            fileNode.setExtension(extension);
+            
+            //I'll remove it, and then add it to the target directory
+            fileNode.getParent().getChildren().remove(fileNode);
+            fileNode.setParent(this.currentDirectory);
+            this.currentDirectory.addChildren(fileNode);
+            
+            return true;
+            
+        } else if (fileSystemNode instanceof DirectoryNode && !newName.isEmpty() && !this.directoryExists(newName)) {
+            DirectoryNode directoryNode = (DirectoryNode) fileSystemNode;
+            directoryNode.setName(newName);
+            
+            //I'll remove it, and then add it to the target directory
+            directoryNode.getParent().getChildren().remove(directoryNode);
+            directoryNode.setParent(this.currentDirectory);
+            this.currentDirectory.addChildren(directoryNode);
+            
+            return true;
+        }
+        
+        return false;
+    }
+    
+    public ArrayList<FileSystemNode> findFiles(FileSystemNode root, String input){
+        ArrayList<FileSystemNode> matchingElements = new ArrayList<>();
+        
+        if (root.toString().matches(input)) {
+            matchingElements.add(root);
+        }
+        
+        if (root instanceof DirectoryNode){
+            DirectoryNode directoryNode = (DirectoryNode) root;
+            directoryNode.getChildren().forEach(fileSystemNode -> {
+                matchingElements.addAll(this.findFiles(fileSystemNode, input));
+            });
+        }
+        
+        return matchingElements;
     }
 }

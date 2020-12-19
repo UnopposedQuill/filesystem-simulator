@@ -58,6 +58,10 @@ public abstract class FileSystemNode {
     public DirectoryNode getParent() {
         return this.parent;
     }
+
+    public void setParent(DirectoryNode parent) {
+        this.parent = parent;
+    }
     
     /**
      * Every subclass is required to implement this method in
@@ -66,6 +70,6 @@ public abstract class FileSystemNode {
      */
     @Override
     public abstract String toString();
-    
+    public abstract String getRoute();
     public abstract int getSize();
 }

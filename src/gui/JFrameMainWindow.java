@@ -4,7 +4,9 @@ package gui;
 import java.awt.Color;
 import java.awt.Component;
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collections;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
@@ -243,6 +245,11 @@ public class JFrameMainWindow extends javax.swing.JFrame {
         jMenuItemExport.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_E, java.awt.event.InputEvent.CTRL_DOWN_MASK));
         jMenuItemExport.setText("Export");
         jMenuItemExport.setEnabled(false);
+        jMenuItemExport.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItemExportActionPerformed(evt);
+            }
+        });
         jMenuFile.add(jMenuItemExport);
 
         jMenuBar1.add(jMenuFile);
@@ -262,11 +269,21 @@ public class JFrameMainWindow extends javax.swing.JFrame {
         jMenuItemCopy.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_C, java.awt.event.InputEvent.CTRL_DOWN_MASK));
         jMenuItemCopy.setText("Copy");
         jMenuItemCopy.setEnabled(false);
+        jMenuItemCopy.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItemCopyActionPerformed(evt);
+            }
+        });
         jMenuEdit.add(jMenuItemCopy);
 
         jMenuItemMove.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_X, java.awt.event.InputEvent.CTRL_DOWN_MASK));
         jMenuItemMove.setText("Move");
         jMenuItemMove.setEnabled(false);
+        jMenuItemMove.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItemMoveActionPerformed(evt);
+            }
+        });
         jMenuEdit.add(jMenuItemMove);
         jMenuEdit.add(jSeparator3);
 
@@ -372,6 +389,8 @@ public class JFrameMainWindow extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    //<editor-fold defaultstate="collapsed" desc="Event Handlers">
+    
     private void jMenuItemCreateVirtualDiskActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItemCreateVirtualDiskActionPerformed
         System.out.println("Create new virtual disk");
         
@@ -414,8 +433,6 @@ public class JFrameMainWindow extends javax.swing.JFrame {
 
                             //Now I need to update the tree to change accordingly
                             this.updateTree();
-                            this.focusNode((DefaultMutableTreeNode)this.jTreeDirectoryTree.getModel().getRoot(),
-                                    new DefaultMutableTreeNode(this.driveManager.getCurrentDirectory()));
                             this.updateDiskContents();
                         } else {
                             //Notify failure on creation
@@ -439,12 +456,9 @@ public class JFrameMainWindow extends javax.swing.JFrame {
             //Check for valid name
             if (!name.equals("")) {
                 if (driveManager.makeDirectory((String)name)){
-                    System.out.println("New Directory created");
 
                     //Now I need to update the tree to change accordingly
                     this.updateTree();
-                    this.focusNode((DefaultMutableTreeNode)this.jTreeDirectoryTree.getModel().getRoot(),
-                            new DefaultMutableTreeNode(this.driveManager.getCurrentDirectory()));
                 } else {
                     //Notify failure on creation
                     JOptionPane.showMessageDialog(null, "Couldn't make new directory, already exists");
@@ -454,7 +468,31 @@ public class JFrameMainWindow extends javax.swing.JFrame {
     }//GEN-LAST:event_jMenuItemCreateDirectoryActionPerformed
 
     private void jMenuItemFindActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItemFindActionPerformed
-        System.out.println("Find");
+        
+        //First I need to ask for the user for the pattern of search
+        Object input = JOptionPane.showInputDialog("Please enter search value");
+        if (!input.equals(JOptionPane.CANCEL_OPTION)) {
+            
+            ArrayList<FileSystemNode> results = this.driveManager.findFiles(this.driveManager.getRootDirectory(), (String)input);
+            
+            Object selectedResult = JOptionPane.showInputDialog(null, "Search completed, please select one of these options, or cancel to dismiss this search", "Search results", JOptionPane.QUESTION_MESSAGE, null, results.toArray(), results.get(0));
+            
+            if (!selectedResult.equals(JOptionPane.CANCEL_OPTION)) {
+                
+                FileSystemNode selectedNode = (FileSystemNode)selectedResult;
+                
+                if (selectedNode instanceof FileNode) {
+                    FileNode fileNode = (FileNode) selectedNode;
+                    this.driveManager.changeDirectory(fileNode.getParent().getRoute());
+                } else {
+                    this.driveManager.changeDirectory(selectedNode.getRoute());
+                }
+                
+                this.updateTree();
+                this.jTextFieldCurrentDirectory.setText(this.driveManager.getCurrentDirectory().getRoute());
+            }
+        }
+        
     }//GEN-LAST:event_jMenuItemFindActionPerformed
 
     private void jButtonGoDirectoryActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonGoDirectoryActionPerformed
@@ -589,11 +627,91 @@ public class JFrameMainWindow extends javax.swing.JFrame {
                 
                 JOptionPane.showMessageDialog(null, "File import was successful");
             } else {
-                JOptionPane.showMessageDialog(null, "Failure upon import");
+                JOptionPane.showMessageDialog(null, "Failure on import");
             }
         }
     }//GEN-LAST:event_jMenuItemImportActionPerformed
 
+    private void jMenuItemExportActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItemExportActionPerformed
+        
+        //First I'll get the selected file in the UI
+        DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode) 
+                this.jTreeDirectoryTree.getLastSelectedPathComponent();
+
+        //If selection changed into none, for some odd reason
+        if (selectedNode == null) return;
+
+        //There's a file node selected
+        FileSystemNode nodeInfo = (FileSystemNode)selectedNode.getUserObject();
+
+        if (nodeInfo instanceof FileNode) {
+            //Cast and ready the fileNode
+            FileNode fileNode = (FileNode) nodeInfo;
+            
+            //Open a file chooser in the current directory of execution
+            JFileChooser fileChooser = new JFileChooser();
+            String userDirectory = System.getProperty("user.dir");
+            fileChooser.setCurrentDirectory(new File(userDirectory));
+        
+            //If there was an opened file
+            if (fileChooser.showSaveDialog(this) == JFileChooser.APPROVE_OPTION) {
+            
+                //I'll get the file contents
+                char [] fileContents = this.driveManager.getData(fileNode);
+                
+                try (FileWriter fileWriter = new FileWriter(fileChooser.getSelectedFile())){
+                    fileWriter.write(fileContents);
+                    JOptionPane.showMessageDialog(null, "File export was successful");
+                } catch (IOException ex){
+                    JOptionPane.showMessageDialog(null, "Failure on export");
+                }
+            }
+        }
+    }//GEN-LAST:event_jMenuItemExportActionPerformed
+
+    private void jMenuItemCopyActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItemCopyActionPerformed
+        //First I'll get the selected file in the UI
+        DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode) 
+                this.jTreeDirectoryTree.getLastSelectedPathComponent();
+
+        //If selection changed into none, for some odd reason
+        if (selectedNode == null) return;
+
+        //There's a file node selected
+        FileSystemNode nodeInfo = (FileSystemNode)selectedNode.getUserObject();
+        
+        this.driveManager.copyFile(nodeInfo);
+        
+        this.updateDiskContents();
+        this.updateTree();
+    }//GEN-LAST:event_jMenuItemCopyActionPerformed
+
+    private void jMenuItemMoveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItemMoveActionPerformed
+        //First I'll get the selected file in the UI
+        DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode) 
+                this.jTreeDirectoryTree.getLastSelectedPathComponent();
+
+        //If selection changed into none, for some odd reason
+        if (selectedNode == null) return;
+
+        //There's a file node selected
+        FileSystemNode nodeInfo = (FileSystemNode)selectedNode.getUserObject();
+        
+        Object newName = JOptionPane.showInputDialog("Please input the name of the file", nodeInfo.toString());
+        
+        if (!newName.equals(JOptionPane.CANCEL_OPTION)) {
+            
+            if (this.driveManager.moveElement(nodeInfo, (String) newName)) {
+                this.updateDiskContents();
+                this.updateTree();
+            } else {
+                JOptionPane.showMessageDialog(null, "Failure on moving file");
+            }
+        }
+    }//GEN-LAST:event_jMenuItemMoveActionPerformed
+
+    //</editor-fold>
+    
     /**
      * @param args the command line arguments
      */
@@ -664,7 +782,7 @@ public class JFrameMainWindow extends javax.swing.JFrame {
     /**
      * This function will update the tree view to the current state of the program
      */
-    public void updateTree(){
+    private void updateTree(){
         
         /*
         I need a new DefaultTreeModel to supply the treeView with
@@ -683,6 +801,10 @@ public class JFrameMainWindow extends javax.swing.JFrame {
         
         //Finally set the new model
         this.jTreeDirectoryTree.setModel(dtmDirectory);
+        
+        //Now I need to update the tree to change accordingly
+        this.focusNode((DefaultMutableTreeNode)this.jTreeDirectoryTree.getModel().getRoot(),
+                new DefaultMutableTreeNode(this.driveManager.getCurrentDirectory()));
     }
     
     /**
@@ -691,7 +813,7 @@ public class JFrameMainWindow extends javax.swing.JFrame {
      * @param node The node which will be transformed into a DMTN
      * @return A jTree compatible node representing the original node
      */
-    public DefaultMutableTreeNode getTreeNode(FileSystemNode node){
+    private DefaultMutableTreeNode getTreeNode(FileSystemNode node){
         //In case of errors
         if (node == null) {
             return null;
@@ -714,7 +836,7 @@ public class JFrameMainWindow extends javax.swing.JFrame {
         return currentTreeNode;
     }
     
-    public void focusNode(DefaultMutableTreeNode node, DefaultMutableTreeNode nodeToFocus){
+    private void focusNode(DefaultMutableTreeNode node, DefaultMutableTreeNode nodeToFocus){
         //I can only expand or collapse directories
         if (node.getUserObject() instanceof DirectoryNode) {
             //It's a directory, do a call for each subsequential child
@@ -740,7 +862,7 @@ public class JFrameMainWindow extends javax.swing.JFrame {
      * to load the file or directory contents
      * @param fileSystemNode The node from which the contents will be loaded from
      */
-    public void updateFileContents(FileSystemNode fileSystemNode){
+    private void updateFileContents(FileSystemNode fileSystemNode){
         /*
         Now, I have to show it's info in the information panel, and the contents
         should the selected node be a file
@@ -785,6 +907,7 @@ public class JFrameMainWindow extends javax.swing.JFrame {
             this.jTableFileContents.setEnabled(true);
             this.jButtonSaveChanges.setEnabled(true);
             this.jButtonDiscard.setEnabled(true);
+            this.jMenuItemExport.setEnabled(true);
             
         } else if (fileSystemNode instanceof DirectoryNode) {
             DirectoryNode directoryNode = (DirectoryNode) fileSystemNode;
@@ -798,7 +921,7 @@ public class JFrameMainWindow extends javax.swing.JFrame {
     /**
      * This will sync the table so that the contents in it reflect the current diskStatus
      */
-    public void updateDiskContents(){
+    private void updateDiskContents(){
         //Need to split the file information into the column count
         
         int rowCount = (int)Math.ceil((double)this.driveManager.getContent().length/this.diskContentsColumnCount);
@@ -839,6 +962,7 @@ public class JFrameMainWindow extends javax.swing.JFrame {
         this.jTableFileContents.setEnabled(false);
         this.jButtonSaveChanges.setEnabled(false);
         this.jButtonDiscard.setEnabled(false);
+        this.jMenuItemExport.setEnabled(false);
     }
     
     private void clearFileData(){
@@ -847,6 +971,26 @@ public class JFrameMainWindow extends javax.swing.JFrame {
         this.jLabelCreationDate.setText("N/A");
         this.jLabelModificationDate.setText("N/A");
         this.jLabelParentElement.setText("N/A");
+    }
+    
+    private void setEnabledDiskDependent(boolean active){
+        
+        //Menu items from File menu
+        this.jMenuItemCreateFile.setEnabled(active);
+        this.jMenuItemCreateDirectory.setEnabled(active);
+        this.jMenuItemImport.setEnabled(active);
+        
+        //Menu items from Edit menu
+        this.jMenuItemFind.setEnabled(active);
+        this.jMenuItemCopy.setEnabled(active);
+        this.jMenuItemMove.setEnabled(active);
+        this.jMenuItemRemove.setEnabled(active);
+        
+        //Now the components in the rest of the UI
+        this.jTextFieldCurrentDirectory.setEnabled(active);
+        this.jButtonGoDirectory.setEnabled(active);
+        this.jTableVirtualDriveContents.setEnabled(active);
+        this.jTreeDirectoryTree.setEnabled(active);
     }
     
     private class ColumnColorRenderer extends DefaultTableCellRenderer{
@@ -873,27 +1017,6 @@ public class JFrameMainWindow extends javax.swing.JFrame {
             }
             return cell;
         }
-    }
-    
-    public void setEnabledDiskDependent(boolean active){
-        
-        //Menu items from File menu
-        this.jMenuItemCreateFile.setEnabled(active);
-        this.jMenuItemCreateDirectory.setEnabled(active);
-        this.jMenuItemImport.setEnabled(active);
-        this.jMenuItemExport.setEnabled(active);
-        
-        //Menu items from Edit menu
-        this.jMenuItemFind.setEnabled(active);
-        this.jMenuItemCopy.setEnabled(active);
-        this.jMenuItemMove.setEnabled(active);
-        this.jMenuItemRemove.setEnabled(active);
-        
-        //Now the components in the rest of the UI
-        this.jTextFieldCurrentDirectory.setEnabled(active);
-        this.jButtonGoDirectory.setEnabled(active);
-        this.jTableVirtualDriveContents.setEnabled(active);
-        this.jTreeDirectoryTree.setEnabled(active);
     }
     
     //</editor-fold>
