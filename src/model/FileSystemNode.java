@@ -70,6 +70,6 @@ public abstract class FileSystemNode {
      */
     @Override
     public abstract String toString();
-    
+    public abstract String getRoute();
     public abstract int getSize();
 }

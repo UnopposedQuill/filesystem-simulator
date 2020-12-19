@@ -6,6 +6,7 @@ import java.awt.Component;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collections;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
@@ -467,7 +468,31 @@ public class JFrameMainWindow extends javax.swing.JFrame {
     }//GEN-LAST:event_jMenuItemCreateDirectoryActionPerformed
 
     private void jMenuItemFindActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItemFindActionPerformed
-        System.out.println("Find");
+        
+        //First I need to ask for the user for the pattern of search
+        Object input = JOptionPane.showInputDialog("Please enter search value");
+        if (!input.equals(JOptionPane.CANCEL_OPTION)) {
+            
+            ArrayList<FileSystemNode> results = this.driveManager.findFiles(this.driveManager.getRootDirectory(), (String)input);
+            
+            Object selectedResult = JOptionPane.showInputDialog(null, "Search completed, please select one of these options, or cancel to dismiss this search", "Search results", JOptionPane.QUESTION_MESSAGE, null, results.toArray(), results.get(0));
+            
+            if (!selectedResult.equals(JOptionPane.CANCEL_OPTION)) {
+                
+                FileSystemNode selectedNode = (FileSystemNode)selectedResult;
+                
+                if (selectedNode instanceof FileNode) {
+                    FileNode fileNode = (FileNode) selectedNode;
+                    this.driveManager.changeDirectory(fileNode.getParent().getRoute());
+                } else {
+                    this.driveManager.changeDirectory(selectedNode.getRoute());
+                }
+                
+                this.updateTree();
+                this.jTextFieldCurrentDirectory.setText(this.driveManager.getCurrentDirectory().getRoute());
+            }
+        }
+        
     }//GEN-LAST:event_jMenuItemFindActionPerformed
 
     private void jButtonGoDirectoryActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonGoDirectoryActionPerformed

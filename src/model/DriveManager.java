@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -554,5 +555,22 @@ public class DriveManager {
         }
         
         return false;
+    }
+    
+    public ArrayList<FileSystemNode> findFiles(FileSystemNode root, String input){
+        ArrayList<FileSystemNode> matchingElements = new ArrayList<>();
+        
+        if (root.toString().matches(input)) {
+            matchingElements.add(root);
+        }
+        
+        if (root instanceof DirectoryNode){
+            DirectoryNode directoryNode = (DirectoryNode) root;
+            directoryNode.getChildren().forEach(fileSystemNode -> {
+                matchingElements.addAll(this.findFiles(fileSystemNode, input));
+            });
+        }
+        
+        return matchingElements;
     }
 }
