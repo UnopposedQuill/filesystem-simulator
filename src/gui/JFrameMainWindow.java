@@ -3,8 +3,10 @@ package gui;
 
 import java.awt.Color;
 import java.awt.Component;
+import java.io.File;
 import java.io.IOException;
 import java.util.Collections;
+import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableCellRenderer;
@@ -69,11 +71,14 @@ public class JFrameMainWindow extends javax.swing.JFrame {
         jSeparator1 = new javax.swing.JPopupMenu.Separator();
         jMenuItemCreateFile = new javax.swing.JMenuItem();
         jMenuItemCreateDirectory = new javax.swing.JMenuItem();
+        jSeparator4 = new javax.swing.JPopupMenu.Separator();
+        jMenuItemImport = new javax.swing.JMenuItem();
+        jMenuItemExport = new javax.swing.JMenuItem();
         jMenuEdit = new javax.swing.JMenu();
         jMenuItemFind = new javax.swing.JMenuItem();
         jMenuItemCopy = new javax.swing.JMenuItem();
         jMenuItemMove = new javax.swing.JMenuItem();
-        jSeparator2 = new javax.swing.JPopupMenu.Separator();
+        jSeparator3 = new javax.swing.JPopupMenu.Separator();
         jMenuItemRemove = new javax.swing.JMenuItem();
         jMenuSettings = new javax.swing.JMenu();
         jCheckBoxMenuItemFastCd = new javax.swing.JCheckBoxMenuItem();
@@ -217,6 +222,22 @@ public class JFrameMainWindow extends javax.swing.JFrame {
             }
         });
         jMenuFile.add(jMenuItemCreateDirectory);
+        jMenuFile.add(jSeparator4);
+
+        jMenuItemImport.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_I, java.awt.event.InputEvent.CTRL_DOWN_MASK));
+        jMenuItemImport.setText("Import");
+        jMenuItemImport.setEnabled(false);
+        jMenuItemImport.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItemImportActionPerformed(evt);
+            }
+        });
+        jMenuFile.add(jMenuItemImport);
+
+        jMenuItemExport.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_E, java.awt.event.InputEvent.CTRL_DOWN_MASK));
+        jMenuItemExport.setText("Export");
+        jMenuItemExport.setEnabled(false);
+        jMenuFile.add(jMenuItemExport);
 
         jMenuBar1.add(jMenuFile);
 
@@ -238,7 +259,7 @@ public class JFrameMainWindow extends javax.swing.JFrame {
         jMenuItemMove.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_X, java.awt.event.InputEvent.CTRL_DOWN_MASK));
         jMenuItemMove.setText("Move");
         jMenuEdit.add(jMenuItemMove);
-        jMenuEdit.add(jSeparator2);
+        jMenuEdit.add(jSeparator3);
 
         jMenuItemRemove.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_DELETE, 0));
         jMenuItemRemove.setText("Remove");
@@ -358,6 +379,8 @@ public class JFrameMainWindow extends javax.swing.JFrame {
             this.updateTree();
             this.updateDiskContents();
             
+            this.setEnabledDiskDependent(true);
+            
         } catch (NumberFormatException ex){
             java.util.logging.Logger.getLogger(JFrameMainWindow.class.getName()).log(java.util.logging.Level.WARNING, "Number couldn't be parsed", ex);
         } catch (IOException ex){
@@ -381,8 +404,8 @@ public class JFrameMainWindow extends javax.swing.JFrame {
                         Object fileSize = JOptionPane.showInputDialog("Please enter the number of bytes for the file", 32);
                         if (!fileSize.equals(JOptionPane.CANCEL_OPTION)) {
 
-                            //Use the input info to create the file
-                            if(driveManager.createFile(Integer.parseInt(fileSize.toString()), fileExtension.toString(), fileName.toString())){
+                            //Use the input info to create the file, and check for errors
+                            if(driveManager.createFile(Integer.parseInt(fileSize.toString()), fileExtension.toString(), fileName.toString()) != null){
 
                                 //Now I need to update the tree to change accordingly
                                 this.updateTree();
@@ -563,6 +586,26 @@ public class JFrameMainWindow extends javax.swing.JFrame {
         this.clearFileData();
     }//GEN-LAST:event_jMenuItemRemoveActionPerformed
 
+    private void jMenuItemImportActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItemImportActionPerformed
+        //Open a file chooser in the current directory of execution
+        JFileChooser fileChooser = new JFileChooser();
+        String userDirectory = System.getProperty("user.dir");
+        fileChooser.setCurrentDirectory(new File(userDirectory));
+        
+        //If there was an opened file
+        if (fileChooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
+            if (this.driveManager.importFile(fileChooser.getSelectedFile())) {
+                //Successful operation
+                this.updateDiskContents();
+                this.updateTree();
+                
+                JOptionPane.showMessageDialog(null, "File import was successful");
+            } else {
+                JOptionPane.showMessageDialog(null, "Failure upon import");
+            }
+        }
+    }//GEN-LAST:event_jMenuItemImportActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -610,7 +653,9 @@ public class JFrameMainWindow extends javax.swing.JFrame {
     private javax.swing.JMenuItem jMenuItemCreateDirectory;
     private javax.swing.JMenuItem jMenuItemCreateFile;
     private javax.swing.JMenuItem jMenuItemCreateVirtualDisk;
+    private javax.swing.JMenuItem jMenuItemExport;
     private javax.swing.JMenuItem jMenuItemFind;
+    private javax.swing.JMenuItem jMenuItemImport;
     private javax.swing.JMenuItem jMenuItemMove;
     private javax.swing.JMenuItem jMenuItemRemove;
     private javax.swing.JMenu jMenuSettings;
@@ -618,7 +663,8 @@ public class JFrameMainWindow extends javax.swing.JFrame {
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JPopupMenu.Separator jSeparator1;
-    private javax.swing.JPopupMenu.Separator jSeparator2;
+    private javax.swing.JPopupMenu.Separator jSeparator3;
+    private javax.swing.JPopupMenu.Separator jSeparator4;
     private javax.swing.JTable jTableFileContents;
     private javax.swing.JTable jTableVirtualDriveContents;
     private javax.swing.JTextField jTextFieldCurrentDirectory;
@@ -837,6 +883,11 @@ public class JFrameMainWindow extends javax.swing.JFrame {
             }
             return cell;
         }
+    }
+    
+    public void setEnabledDiskDependent(boolean active){
+        this.jMenuItemImport.setEnabled(active);
+        this.jMenuItemExport.setEnabled(active);
     }
     
     //</editor-fold>

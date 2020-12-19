@@ -11,11 +11,17 @@ public class FileSector {
     private int sectorPointer;
     
     //So I can link each sector together
-    private FileSector nextSector;
+    private FileSector nextSector, previousSector;
 
-    public FileSector(int sectorPointer, FileSector nextSector) {
+    public FileSector(int sectorPointer, FileSector nextSector, FileSector previousSector) {
         this.sectorPointer = sectorPointer;
         this.nextSector = nextSector;
+        this.previousSector = previousSector;
+    }
+    
+    public FileSector(int sectorPointer) {
+        this.sectorPointer = sectorPointer;
+        this.nextSector = this.previousSector = null;
     }
 
     /**
@@ -37,4 +43,14 @@ public class FileSector {
     public void setNextSector(FileSector nextSector) {
         this.nextSector = nextSector;
     }
+
+    public FileSector getPreviousSector() {
+        return previousSector;
+    }
+
+    public void setPreviousSector(FileSector previousSector) {
+        this.previousSector = previousSector;
+    }
+    
+    
 }

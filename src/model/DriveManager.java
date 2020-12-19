@@ -2,8 +2,11 @@
 package model;
 
 import java.io.File;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -50,10 +53,7 @@ public class DriveManager {
             diskFile.createNewFile();
         }
         
-        //Then write the current contents to it
-        try (FileWriter fw = new FileWriter(diskFile)) {
-            fw.write(diskContents);
-        }
+        this.updateDiskContents();
         
         //Now that the drive is done, I prepare the file system
         this.rootNode = new DirectoryNode(null, "root");
@@ -149,7 +149,7 @@ public class DriveManager {
             if (!this.ocuppiedSectors[i]) {
                 //This sector is free, set it to occupied and return it
                 this.ocuppiedSectors[i] = true;
-                return new FileSector(i * sectorSize, null);
+                return new FileSector(i * sectorSize);
             }
         }
         return null;//Disk is full
@@ -163,6 +163,16 @@ public class DriveManager {
         this.ocuppiedSectors[fileSector.getSectorPointer()/sectorSize] = false;
     }
     
+    /**
+     * This function allows for easy copying of contents between two arrays
+     * It will move the smaller between amount and the source length bytes from
+     * the source pointed by sourceoffset into the destination by destOffset.
+     * @param destination The destination array
+     * @param destOffset The position in the destination from which to start copying
+     * @param source The source data
+     * @param sourceOffset The position in the source from which to start copying
+     * @param amount The maximum amount of bytes to move
+     */
     private static void copyArrayContents(char[] destination, int destOffset, char[] source, int sourceOffset, int amount){
         int initialPosition = 0;
         while(amount-- > 0 && sourceOffset < source.length){
@@ -170,12 +180,22 @@ public class DriveManager {
         }
     }
     
-    public boolean createFile(int fileSize, String extension, String name){
+    /**
+     * This will create a file with the given arguments into the current directory
+     * Note that extension doesn't require any dots in it
+     * It will also clear to 0 any information in the sectors taken by this method.
+     * This function will also notice when there is not enough space for the file
+     * @param fileSize The size of the file
+     * @param extension The extension of the file
+     * @param name The name of the file
+     * @return The new File created, or null in case of failure
+     */
+    public FileNode createFile(int fileSize, String extension, String name){
         
         //First I need to check if there's a file with that name and extension
         if (this.currentDirectory.getChildren().contains(new FileNode(null, null, 0, extension, name, this.currentDirectory))){
             //It exists, return failure
-            return false;
+            return null;
         }
         
         //First I need to allocate enough sectors for this file
@@ -191,11 +211,14 @@ public class DriveManager {
                 for (int j = 0; j < sectors.length - 1; j++) {
                     this.freeSector(sectors[j]);
                 }
-                return false;
+                return null;
             }
             
-            //I need to hook each sector to its next one
-            if (i > 0) sectors[i-1].setNextSector(sectors[i]);
+            //I need to hook each sector to its previous and next
+            if (i > 0) {
+                sectors[i-1].setNextSector(sectors[i]);
+                sectors[i].setPreviousSector(sectors[i-1]);
+            }
             
             for (int j = 0; j < this.sectorSize; j++) {
                 this.diskContents[sectors[i].getSectorPointer() + j] = 0;
@@ -203,8 +226,12 @@ public class DriveManager {
         }
         
         //Lastly I can now insert it
-        this.currentDirectory.addChildren(new FileNode(sectors[0], sectors[sectorAmount-1], fileSize, extension, name, this.currentDirectory));
-        return true;
+        FileNode newFileNode = new FileNode(sectors[0], sectors[sectorAmount-1], fileSize, extension, name, this.currentDirectory);
+        this.currentDirectory.addChildren(newFileNode);
+        
+        //Then update the disk and return
+        this.updateDiskContents();
+        return newFileNode;
     }
     
     /**
@@ -249,8 +276,11 @@ public class DriveManager {
             pointer = pointer.getNextSector();
         }
         
-        //And lastly, change its modification date
+        //Change its modification date
         fileNode.updateModificationDate();
+        
+        //Then update the disk and return
+        this.updateDiskContents();
     }
 
     /**
@@ -304,5 +334,115 @@ public class DriveManager {
      */
     public int getSectorSize() {
         return sectorSize;
+    }
+    
+    /**
+     * Adds a byte into the given fileNode, and will add new sectors if there is
+     * enough disk space
+     * @param fileNode The node whose size will be increased by 1
+     * @return True if the addition was succesful
+     */
+    public boolean addByte(FileNode fileNode){
+        //There might be cases where the sector is not completely full, as such
+        //I only need to increase the size
+        if (fileNode.getSize() % this.sectorSize != 0) {
+            fileNode.setSize(fileNode.getSize() + 1);
+            return true;
+        }
+        
+        //I need to add one sector to the file
+        FileSector newFileSector = this.getFirstEmptySector();
+        
+        //No free sectors
+        if (newFileSector == null) return false;
+        
+        //Move the sector pointers
+        newFileSector.setPreviousSector(fileNode.getEnd());
+        fileNode.getEnd().setNextSector(newFileSector);
+        fileNode.setEnd(newFileSector);
+        
+        return true;//Succesful operation
+    }
+    
+    public boolean importFile(File importingFile){
+        
+        //Supposedly, there's at least a / right before the file name
+        String name = importingFile.getName().substring(importingFile.getName().lastIndexOf('\\') + 1, importingFile.getName().lastIndexOf('.')),
+               extension = importingFile.getName().substring(importingFile.getName().lastIndexOf('.') + 1);
+        
+        //Create the fileNode, so I can start adding new bytes later
+        FileSector fileSector = this.getFirstEmptySector();
+        FileNode fileNode = new FileNode(fileSector, fileSector, 0, extension, name, this.currentDirectory);
+        
+        
+        //Counter will be so I can know if the current sector is full
+        //Readchar will store the char until I save it
+        int readChar, counter = 0;
+        
+        try {
+            FileReader fr = new FileReader(importingFile);
+            
+            //I can start reading bytes into this file
+            do {
+                readChar = fr.read();
+                if (readChar == -1) {
+                    //Read unsuccesful, I need to check if there are some unnecessary sectors
+                    //Unnecessary sectors are those blank sectors when the file has more than 1 sector
+                    if (counter == 0 && fileNode.getBegin() != fileNode.getEnd()) {
+                        this.freeSector(fileNode.getEnd());
+                        fileNode.setEnd(fileNode.getEnd().getPreviousSector());
+                    }
+                    break;
+                }
+                
+                if (counter == this.sectorSize) {
+                    //Sector is full, create and add a new one to the end
+                    fileSector = this.getFirstEmptySector();
+                    fileSector.setPreviousSector(fileNode.getEnd());
+                    fileNode.getEnd().setNextSector(fileSector);
+                    fileNode.setEnd(fileSector);
+                    counter = 0;
+                }
+                
+                //Get the byte in
+                this.diskContents[fileSector.getSectorPointer()+counter] = (char)readChar;
+                fileNode.setSize(fileNode.getSize() + 1);
+                counter++;
+                
+            } while (true);
+            
+        } catch (IOException ex) {
+            //Exception on read
+            Logger.getLogger(DriveManager.class.getName()).log(Level.SEVERE, null, ex);
+            this.removeNode(fileNode);
+            return false;
+        }
+        
+        this.currentDirectory.getChildren().add(fileNode);
+        
+        //Then update the disk and return
+        this.updateDiskContents();
+        
+        return true;//Operation succesful
+    }
+    
+    /**
+     * This method will move the given element into another route
+     * @param fileSystemNode The element to be moved
+     * @param newRoute The new route for the element
+     */
+    public void moveFile(FileSystemNode fileSystemNode, String newRoute){
+        
+        //First try to change to the given directory
+        
+    }
+    
+    private void updateDiskContents(){
+        //Then write the current contents to it
+        try (FileWriter fw = new FileWriter(diskFile)) {
+            fw.write(diskContents);
+        } catch (IOException ex) {
+            Logger.getLogger(DriveManager.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 }
