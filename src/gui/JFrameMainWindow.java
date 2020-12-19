@@ -1005,17 +1005,14 @@ public class JFrameMainWindow extends javax.swing.JFrame {
             Component cell = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
             if (this.driveManager != null) {
                 switch(this.driveManager.isSectorFree((row * diskContentsColumnCount + column) / this.driveManager.getSectorSize())){
-                    case FREE:{
+                    case FREE -> {
                         cell.setBackground(Color.GREEN);
-                        break;
                     }
-                    case OCCUPIED:{
+                    case OCCUPIED -> {
                         cell.setBackground(Color.RED);
-                        break;
                     }
-                    case OUTOFBOUNDS:{
+                    case OUTOFBOUNDS -> {
                         cell.setBackground(Color.BLACK);
-                        break;
                     }
                 }
             }
