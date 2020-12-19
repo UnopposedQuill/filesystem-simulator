@@ -431,7 +431,7 @@ public class DriveManager {
             return false;
         }
         
-        this.currentDirectory.getChildren().add(fileNode);
+        this.currentDirectory.addChildren(fileNode);
         
         //Then update the disk and return
         this.updateDiskContents();
@@ -512,13 +512,47 @@ public class DriveManager {
     }
     
     /**
-     * This method will move the given element into another route
+     * This method will move the given element into the current directory
      * @param fileSystemNode The element to be moved
-     * @param newRoute The new route for the element
+     * @param newName The new name for the element
+     * @return True if the operation was successful, false otherwise
      */
-    public void moveFile(FileSystemNode fileSystemNode, String newRoute){
+    public boolean moveElement(FileSystemNode fileSystemNode, String newName){
         
-        //First try to change to the given directory
+        if (fileSystemNode instanceof FileNode) {
+            
+            //A regex for "name.ext" formats
+            if (!newName.matches("\\w(\\w|\\s)*\\.[a-z]{3}")) return false;
+            
+            String name = newName.substring(0, newName.indexOf('.')),
+                   extension = newName.substring(newName.indexOf('.') + 1);
+            
+            //Test if there already exists a file with this name and extension in here
+            if (this.fileExists(name, extension)) return false;
+            
+            FileNode fileNode = (FileNode) fileSystemNode;
+            fileNode.setName(name);
+            fileNode.setExtension(extension);
+            
+            //I'll remove it, and then add it to the target directory
+            fileNode.getParent().getChildren().remove(fileNode);
+            fileNode.setParent(this.currentDirectory);
+            this.currentDirectory.addChildren(fileNode);
+            
+            return true;
+            
+        } else if (fileSystemNode instanceof DirectoryNode && !newName.isEmpty() && !this.directoryExists(newName)) {
+            DirectoryNode directoryNode = (DirectoryNode) fileSystemNode;
+            directoryNode.setName(newName);
+            
+            //I'll remove it, and then add it to the target directory
+            directoryNode.getParent().getChildren().remove(directoryNode);
+            directoryNode.setParent(this.currentDirectory);
+            this.currentDirectory.addChildren(directoryNode);
+            
+            return true;
+        }
         
+        return false;
     }
 }

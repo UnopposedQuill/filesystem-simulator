@@ -278,6 +278,11 @@ public class JFrameMainWindow extends javax.swing.JFrame {
         jMenuItemMove.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_X, java.awt.event.InputEvent.CTRL_DOWN_MASK));
         jMenuItemMove.setText("Move");
         jMenuItemMove.setEnabled(false);
+        jMenuItemMove.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItemMoveActionPerformed(evt);
+            }
+        });
         jMenuEdit.add(jMenuItemMove);
         jMenuEdit.add(jSeparator3);
 
@@ -383,6 +388,8 @@ public class JFrameMainWindow extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    //<editor-fold defaultstate="collapsed" desc="Event Handlers">
+    
     private void jMenuItemCreateVirtualDiskActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItemCreateVirtualDiskActionPerformed
         System.out.println("Create new virtual disk");
         
@@ -425,8 +432,6 @@ public class JFrameMainWindow extends javax.swing.JFrame {
 
                             //Now I need to update the tree to change accordingly
                             this.updateTree();
-                            this.focusNode((DefaultMutableTreeNode)this.jTreeDirectoryTree.getModel().getRoot(),
-                                    new DefaultMutableTreeNode(this.driveManager.getCurrentDirectory()));
                             this.updateDiskContents();
                         } else {
                             //Notify failure on creation
@@ -453,8 +458,6 @@ public class JFrameMainWindow extends javax.swing.JFrame {
 
                     //Now I need to update the tree to change accordingly
                     this.updateTree();
-                    this.focusNode((DefaultMutableTreeNode)this.jTreeDirectoryTree.getModel().getRoot(),
-                            new DefaultMutableTreeNode(this.driveManager.getCurrentDirectory()));
                 } else {
                     //Notify failure on creation
                     JOptionPane.showMessageDialog(null, "Couldn't make new directory, already exists");
@@ -658,6 +661,32 @@ public class JFrameMainWindow extends javax.swing.JFrame {
         this.updateTree();
     }//GEN-LAST:event_jMenuItemCopyActionPerformed
 
+    private void jMenuItemMoveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItemMoveActionPerformed
+        //First I'll get the selected file in the UI
+        DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode) 
+                this.jTreeDirectoryTree.getLastSelectedPathComponent();
+
+        //If selection changed into none, for some odd reason
+        if (selectedNode == null) return;
+
+        //There's a file node selected
+        FileSystemNode nodeInfo = (FileSystemNode)selectedNode.getUserObject();
+        
+        Object newName = JOptionPane.showInputDialog("Please input the name of the file", nodeInfo.toString());
+        
+        if (!newName.equals(JOptionPane.CANCEL_OPTION)) {
+            
+            if (this.driveManager.moveElement(nodeInfo, (String) newName)) {
+                this.updateDiskContents();
+                this.updateTree();
+            } else {
+                JOptionPane.showMessageDialog(null, "Failure on moving file");
+            }
+        }
+    }//GEN-LAST:event_jMenuItemMoveActionPerformed
+
+    //</editor-fold>
+    
     /**
      * @param args the command line arguments
      */
@@ -747,6 +776,10 @@ public class JFrameMainWindow extends javax.swing.JFrame {
         
         //Finally set the new model
         this.jTreeDirectoryTree.setModel(dtmDirectory);
+        
+        //Now I need to update the tree to change accordingly
+        this.focusNode((DefaultMutableTreeNode)this.jTreeDirectoryTree.getModel().getRoot(),
+                new DefaultMutableTreeNode(this.driveManager.getCurrentDirectory()));
     }
     
     /**

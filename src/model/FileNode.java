@@ -1,7 +1,6 @@
 
 package model;
 
-import java.util.ArrayList;
 import java.util.Objects;
 
 /**
@@ -24,7 +23,7 @@ public class FileNode extends FileSystemNode{
     /**
      * The extension related to said file
      */
-    private final String extension;
+    private String extension;
 
     public FileNode(FileSector beginFileSector, FileSector endFileSector, int size, String extension, String name, DirectoryNode parent) {
         super(parent, name);
@@ -108,5 +107,9 @@ public class FileNode extends FileSystemNode{
     @Override
     public String toString() {
         return this.getName() + "." + this.extension;
+    }
+
+    public void setExtension(String extension){
+        this.extension = extension;
     }
 }
