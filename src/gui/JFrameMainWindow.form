@@ -28,6 +28,7 @@
                   <KeyStroke key="Ctrl+N"/>
                 </Property>
                 <Property name="text" type="java.lang.String" value="Create File"/>
+                <Property name="enabled" type="boolean" value="false"/>
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jMenuItemCreateFileActionPerformed"/>
@@ -39,10 +40,34 @@
                   <KeyStroke key="Shift+Ctrl+N"/>
                 </Property>
                 <Property name="text" type="java.lang.String" value="Create New Directory"/>
+                <Property name="enabled" type="boolean" value="false"/>
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jMenuItemCreateDirectoryActionPerformed"/>
               </Events>
+            </MenuItem>
+            <MenuItem class="javax.swing.JPopupMenu$Separator" name="jSeparator4">
+            </MenuItem>
+            <MenuItem class="javax.swing.JMenuItem" name="jMenuItemImport">
+              <Properties>
+                <Property name="accelerator" type="javax.swing.KeyStroke" editor="org.netbeans.modules.form.editors.KeyStrokeEditor">
+                  <KeyStroke key="Ctrl+I"/>
+                </Property>
+                <Property name="text" type="java.lang.String" value="Import"/>
+                <Property name="enabled" type="boolean" value="false"/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jMenuItemImportActionPerformed"/>
+              </Events>
+            </MenuItem>
+            <MenuItem class="javax.swing.JMenuItem" name="jMenuItemExport">
+              <Properties>
+                <Property name="accelerator" type="javax.swing.KeyStroke" editor="org.netbeans.modules.form.editors.KeyStrokeEditor">
+                  <KeyStroke key="Ctrl+E"/>
+                </Property>
+                <Property name="text" type="java.lang.String" value="Export"/>
+                <Property name="enabled" type="boolean" value="false"/>
+              </Properties>
             </MenuItem>
           </SubComponents>
         </Menu>
@@ -57,6 +82,7 @@
                   <KeyStroke key="Ctrl+F"/>
                 </Property>
                 <Property name="text" type="java.lang.String" value="Find"/>
+                <Property name="enabled" type="boolean" value="false"/>
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jMenuItemFindActionPerformed"/>
@@ -68,6 +94,7 @@
                   <KeyStroke key="Ctrl+C"/>
                 </Property>
                 <Property name="text" type="java.lang.String" value="Copy"/>
+                <Property name="enabled" type="boolean" value="false"/>
               </Properties>
             </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="jMenuItemMove">
@@ -76,9 +103,10 @@
                   <KeyStroke key="Ctrl+X"/>
                 </Property>
                 <Property name="text" type="java.lang.String" value="Move"/>
+                <Property name="enabled" type="boolean" value="false"/>
               </Properties>
             </MenuItem>
-            <MenuItem class="javax.swing.JPopupMenu$Separator" name="jSeparator2">
+            <MenuItem class="javax.swing.JPopupMenu$Separator" name="jSeparator3">
             </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="jMenuItemRemove">
               <Properties>
@@ -86,6 +114,7 @@
                   <KeyStroke key="DELETE"/>
                 </Property>
                 <Property name="text" type="java.lang.String" value="Remove"/>
+                <Property name="enabled" type="boolean" value="false"/>
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jMenuItemRemoveActionPerformed"/>
@@ -232,6 +261,7 @@
     <Component class="javax.swing.JTextField" name="jTextFieldCurrentDirectory">
       <Properties>
         <Property name="text" type="java.lang.String" value="Disk not initialized"/>
+        <Property name="enabled" type="boolean" value="false"/>
       </Properties>
       <Events>
         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jTextFieldCurrentDirectoryActionPerformed"/>
@@ -337,6 +367,7 @@
                 </Column>
               </TableColumnModel>
             </Property>
+            <Property name="enabled" type="boolean" value="false"/>
             <Property name="showGrid" type="boolean" value="true"/>
             <Property name="tableHeader" type="javax.swing.table.JTableHeader" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
               <Connection code="null" type="code"/>
@@ -425,6 +456,7 @@
                 </Column>
               </TableColumnModel>
             </Property>
+            <Property name="enabled" type="boolean" value="false"/>
             <Property name="showGrid" type="boolean" value="true"/>
             <Property name="tableHeader" type="javax.swing.table.JTableHeader" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
               <Connection code="null" type="code"/>
@@ -439,6 +471,7 @@
     <Component class="javax.swing.JButton" name="jButtonGoDirectory">
       <Properties>
         <Property name="text" type="java.lang.String" value="Go"/>
+        <Property name="enabled" type="boolean" value="false"/>
       </Properties>
       <Events>
         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jButtonGoDirectoryActionPerformed"/>
