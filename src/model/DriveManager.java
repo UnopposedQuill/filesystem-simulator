@@ -15,7 +15,7 @@ import java.util.logging.Logger;
  */
 public class DriveManager {
     private final char[] diskContents;
-    private final boolean[] ocuppiedSectors;
+    private final FileSectorStateEnum[] ocuppiedSectors;
     private final int sectorSize;
     private final File diskFile;
     private final DirectoryNode rootNode;
@@ -38,9 +38,9 @@ public class DriveManager {
         this.sectorSize = sectorSize;
         
         //Update the free sector array
-        this.ocuppiedSectors = new boolean[diskContents.length/sectorSize];
+        this.ocuppiedSectors = new FileSectorStateEnum[diskContents.length/sectorSize];
         for (int i = 0; i < ocuppiedSectors.length; i++) {
-            ocuppiedSectors[i] = false;//Every sector is free right now
+            ocuppiedSectors[i] = FileSectorStateEnum.FREE;//Every sector is free right now
         }
         
         //Now I need to create the file representing the disk
@@ -151,9 +151,9 @@ public class DriveManager {
         
         //I need a pointer to said sector
         for (int i = 0; i < this.ocuppiedSectors.length; i++) {
-            if (!this.ocuppiedSectors[i]) {
+            if (this.ocuppiedSectors[i] == FileSectorStateEnum.FREE) {
                 //This sector is free, set it to occupied and return it
-                this.ocuppiedSectors[i] = true;
+                this.ocuppiedSectors[i] = FileSectorStateEnum.OCCUPIED;
                 return new FileSector(i * sectorSize);
             }
         }
@@ -165,7 +165,7 @@ public class DriveManager {
      * @param fileSector The file sector to be freed
      */
     private void freeSector(FileSector fileSector){
-        this.ocuppiedSectors[fileSector.getSectorPointer()/sectorSize] = false;
+        this.ocuppiedSectors[fileSector.getSectorPointer()/sectorSize] = FileSectorStateEnum.FREE;
     }
     
     /**
@@ -334,8 +334,13 @@ public class DriveManager {
      * @param sector The sector to be evaluated
      * @return True if the sector is free
      */
-    public boolean isSectorFree(int sector){
-        return !this.ocuppiedSectors[sector];
+    public FileSectorStateEnum isSectorFree(int sector){
+        
+        //Need this for out of bounds
+        if (0 > sector || sector >= this.ocuppiedSectors.length) return FileSectorStateEnum.OUTOFBOUNDS;
+        
+        //Then this for the actual data
+        return this.ocuppiedSectors[sector];
     }
 
     /**

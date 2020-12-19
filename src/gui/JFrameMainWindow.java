@@ -1004,10 +1004,19 @@ public class JFrameMainWindow extends javax.swing.JFrame {
         public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected,   boolean hasFocus, int row, int column) {
             Component cell = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
             if (this.driveManager != null) {
-                if (this.driveManager.isSectorFree((row * diskContentsColumnCount + column) / this.driveManager.getSectorSize())) {
-                    cell.setBackground(Color.GREEN);
-                } else {
-                    cell.setBackground(Color.RED);
+                switch(this.driveManager.isSectorFree((row * diskContentsColumnCount + column) / this.driveManager.getSectorSize())){
+                    case FREE:{
+                        cell.setBackground(Color.GREEN);
+                        break;
+                    }
+                    case OCCUPIED:{
+                        cell.setBackground(Color.RED);
+                        break;
+                    }
+                    case OUTOFBOUNDS:{
+                        cell.setBackground(Color.BLACK);
+                        break;
+                    }
                 }
             }
             return cell;
