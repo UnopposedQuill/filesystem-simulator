@@ -87,6 +87,7 @@ public class JFrameMainWindow extends javax.swing.JFrame {
         setTitle("File System Simulator");
 
         jTextFieldCurrentDirectory.setText("Disk not initialized");
+        jTextFieldCurrentDirectory.setEnabled(false);
         jTextFieldCurrentDirectory.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jTextFieldCurrentDirectoryActionPerformed(evt);
@@ -124,6 +125,7 @@ public class JFrameMainWindow extends javax.swing.JFrame {
                 return types [columnIndex];
             }
         });
+        jTableFileContents.setEnabled(false);
         jTableFileContents.setShowGrid(true);
         jTableFileContents.setTableHeader(null);
         jScrollPane2.setViewportView(jTableFileContents);
@@ -140,6 +142,7 @@ public class JFrameMainWindow extends javax.swing.JFrame {
                 "Title 1", "Title 2", "Title 3", "Title 4", "Title 5", "Title 6", "Title 7", "Title 8", "Title 9", "Title 10"
             }
         ));
+        jTableVirtualDriveContents.setEnabled(false);
         jTableVirtualDriveContents.setShowGrid(true);
         jTableVirtualDriveContents.setTableHeader(null);
         //For each column in this Table, I need to reset the renderer
@@ -150,6 +153,7 @@ public class JFrameMainWindow extends javax.swing.JFrame {
         jScrollPane3.setViewportView(jTableVirtualDriveContents);
 
         jButtonGoDirectory.setText("Go");
+        jButtonGoDirectory.setEnabled(false);
         jButtonGoDirectory.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButtonGoDirectoryActionPerformed(evt);
@@ -207,6 +211,7 @@ public class JFrameMainWindow extends javax.swing.JFrame {
 
         jMenuItemCreateFile.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_N, java.awt.event.InputEvent.CTRL_DOWN_MASK));
         jMenuItemCreateFile.setText("Create File");
+        jMenuItemCreateFile.setEnabled(false);
         jMenuItemCreateFile.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jMenuItemCreateFileActionPerformed(evt);
@@ -216,6 +221,7 @@ public class JFrameMainWindow extends javax.swing.JFrame {
 
         jMenuItemCreateDirectory.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_N, java.awt.event.InputEvent.SHIFT_DOWN_MASK | java.awt.event.InputEvent.CTRL_DOWN_MASK));
         jMenuItemCreateDirectory.setText("Create New Directory");
+        jMenuItemCreateDirectory.setEnabled(false);
         jMenuItemCreateDirectory.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jMenuItemCreateDirectoryActionPerformed(evt);
@@ -245,6 +251,7 @@ public class JFrameMainWindow extends javax.swing.JFrame {
 
         jMenuItemFind.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_F, java.awt.event.InputEvent.CTRL_DOWN_MASK));
         jMenuItemFind.setText("Find");
+        jMenuItemFind.setEnabled(false);
         jMenuItemFind.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jMenuItemFindActionPerformed(evt);
@@ -254,15 +261,18 @@ public class JFrameMainWindow extends javax.swing.JFrame {
 
         jMenuItemCopy.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_C, java.awt.event.InputEvent.CTRL_DOWN_MASK));
         jMenuItemCopy.setText("Copy");
+        jMenuItemCopy.setEnabled(false);
         jMenuEdit.add(jMenuItemCopy);
 
         jMenuItemMove.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_X, java.awt.event.InputEvent.CTRL_DOWN_MASK));
         jMenuItemMove.setText("Move");
+        jMenuItemMove.setEnabled(false);
         jMenuEdit.add(jMenuItemMove);
         jMenuEdit.add(jSeparator3);
 
         jMenuItemRemove.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_DELETE, 0));
         jMenuItemRemove.setText("Remove");
+        jMenuItemRemove.setEnabled(false);
         jMenuItemRemove.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jMenuItemRemoveActionPerformed(evt);
@@ -375,7 +385,6 @@ public class JFrameMainWindow extends javax.swing.JFrame {
             this.driveManager = new DriveManager(diskSize, sectorSize);
             
             this.jTextFieldCurrentDirectory.setText("/root/");
-            this.jTreeDirectoryTree.setEnabled(true);
             this.updateTree();
             this.updateDiskContents();
             
@@ -389,67 +398,56 @@ public class JFrameMainWindow extends javax.swing.JFrame {
     }//GEN-LAST:event_jMenuItemCreateVirtualDiskActionPerformed
 
     private void jMenuItemCreateFileActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItemCreateFileActionPerformed
-        System.out.println("Create new file in current virtual disk");
-        if (driveManager == null) {
-            JOptionPane.showMessageDialog(null, "Please first create a virtual drive");
-        } else {
-            try{
-                //I need to go through each of the three parameters to check for cancelation
-                Object fileName = JOptionPane.showInputDialog("Please enter the name for the file", "New File");
-                if (!fileName.equals(JOptionPane.CANCEL_OPTION)) {
-                    
-                    Object fileExtension = JOptionPane.showInputDialog("Please enter the file's extension", "txt");
-                    if (!fileExtension.equals(JOptionPane.CANCEL_OPTION)) {
+        try{
+            //I need to go through each of the three parameters to check for cancelation
+            Object fileName = JOptionPane.showInputDialog("Please enter the name for the file", "New File");
+            if (!fileName.equals(JOptionPane.CANCEL_OPTION)) {
 
-                        Object fileSize = JOptionPane.showInputDialog("Please enter the number of bytes for the file", 32);
-                        if (!fileSize.equals(JOptionPane.CANCEL_OPTION)) {
+                Object fileExtension = JOptionPane.showInputDialog("Please enter the file's extension", "txt");
+                if (!fileExtension.equals(JOptionPane.CANCEL_OPTION)) {
 
-                            //Use the input info to create the file, and check for errors
-                            if(driveManager.createFile(Integer.parseInt(fileSize.toString()), fileExtension.toString(), fileName.toString()) != null){
+                    Object fileSize = JOptionPane.showInputDialog("Please enter the number of bytes for the file", 32);
+                    if (!fileSize.equals(JOptionPane.CANCEL_OPTION)) {
 
-                                //Now I need to update the tree to change accordingly
-                                this.updateTree();
-                                this.focusNode((DefaultMutableTreeNode)this.jTreeDirectoryTree.getModel().getRoot(),
-                                        new DefaultMutableTreeNode(this.driveManager.getCurrentDirectory()));
-                                this.updateDiskContents();
-                            } else {
-                                //Notify failure on creation
-                                JOptionPane.showMessageDialog(null, "Couldn't create file, either it already exists or no space available");
-                            }
+                        //Use the input info to create the file, and check for errors
+                        if(driveManager.createFile(Integer.parseInt(fileSize.toString()), fileExtension.toString(), fileName.toString()) != null){
+
+                            //Now I need to update the tree to change accordingly
+                            this.updateTree();
+                            this.focusNode((DefaultMutableTreeNode)this.jTreeDirectoryTree.getModel().getRoot(),
+                                    new DefaultMutableTreeNode(this.driveManager.getCurrentDirectory()));
+                            this.updateDiskContents();
+                        } else {
+                            //Notify failure on creation
+                            JOptionPane.showMessageDialog(null, "Couldn't create file, either it already exists or no space available");
                         }
                     }
                 }
-            } catch (NumberFormatException ex){
-                java.util.logging.Logger.getLogger(JFrameMainWindow.class.getName()).log(java.util.logging.Level.WARNING, "Number couldn't be parsed", ex);
             }
+        } catch (NumberFormatException ex){
+            java.util.logging.Logger.getLogger(JFrameMainWindow.class.getName()).log(java.util.logging.Level.WARNING, "Number couldn't be parsed", ex);
         }
     }//GEN-LAST:event_jMenuItemCreateFileActionPerformed
 
     private void jMenuItemCreateDirectoryActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItemCreateDirectoryActionPerformed
-        System.out.println("Create new directory in current virtual disk");
-        if (driveManager == null) {
-            JOptionPane.showMessageDialog(null, "Please first create a virtual drive");
-        } else {
-            
-            //Time to ask for the new directory name
-            Object name = JOptionPane.showInputDialog("Please enter the directory name", "New Folder");
-            
-            //Check for cancelation
-            if (!name.equals(JOptionPane.CANCEL_OPTION)){
-                
-                //Check for valid name
-                if (!name.equals("")) {
-                    if (driveManager.makeDirectory((String)name)){
-                        System.out.println("New Directory created");
+        //Time to ask for the new directory name
+        Object name = JOptionPane.showInputDialog("Please enter the directory name", "New Folder");
 
-                        //Now I need to update the tree to change accordingly
-                        this.updateTree();
-                        this.focusNode((DefaultMutableTreeNode)this.jTreeDirectoryTree.getModel().getRoot(),
-                                new DefaultMutableTreeNode(this.driveManager.getCurrentDirectory()));
-                    } else {
-                        //Notify failure on creation
-                        JOptionPane.showMessageDialog(null, "Couldn't make new directory, already exists");
-                    }
+        //Check for cancelation
+        if (!name.equals(JOptionPane.CANCEL_OPTION)){
+
+            //Check for valid name
+            if (!name.equals("")) {
+                if (driveManager.makeDirectory((String)name)){
+                    System.out.println("New Directory created");
+
+                    //Now I need to update the tree to change accordingly
+                    this.updateTree();
+                    this.focusNode((DefaultMutableTreeNode)this.jTreeDirectoryTree.getModel().getRoot(),
+                            new DefaultMutableTreeNode(this.driveManager.getCurrentDirectory()));
+                } else {
+                    //Notify failure on creation
+                    JOptionPane.showMessageDialog(null, "Couldn't make new directory, already exists");
                 }
             }
         }
@@ -460,22 +458,17 @@ public class JFrameMainWindow extends javax.swing.JFrame {
     }//GEN-LAST:event_jMenuItemFindActionPerformed
 
     private void jButtonGoDirectoryActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonGoDirectoryActionPerformed
-        System.out.println("Create new directory in current virtual disk");
-        if (driveManager == null) {
-            JOptionPane.showMessageDialog(null, "Please first create a virtual drive");
+        if (this.driveManager.changeDirectory(this.jTextFieldCurrentDirectory.getText())) {
+            //Directory change successfull
+            this.jTextFieldCurrentDirectory.setText(this.driveManager.getCurrentDirectory().getRoute());
+
+            //Now I need to update the tree to change accordingly
+            this.focusNode((DefaultMutableTreeNode)this.jTreeDirectoryTree.getModel().getRoot(),
+                    new DefaultMutableTreeNode(this.driveManager.getCurrentDirectory()));
+
         } else {
-            if (this.driveManager.changeDirectory(this.jTextFieldCurrentDirectory.getText())) {
-                //Directory change successfull
-                this.jTextFieldCurrentDirectory.setText(this.driveManager.getCurrentDirectory().getRoute());
-
-                //Now I need to update the tree to change accordingly
-                this.focusNode((DefaultMutableTreeNode)this.jTreeDirectoryTree.getModel().getRoot(),
-                        new DefaultMutableTreeNode(this.driveManager.getCurrentDirectory()));
-
-            } else {
-                //Error
-                JOptionPane.showMessageDialog(null, "Couldn't change to directory");
-            }
+            //Error
+            JOptionPane.showMessageDialog(null, "Couldn't change to directory");
         }
     }//GEN-LAST:event_jButtonGoDirectoryActionPerformed
 
@@ -484,21 +477,16 @@ public class JFrameMainWindow extends javax.swing.JFrame {
     }//GEN-LAST:event_jTextFieldCurrentDirectoryActionPerformed
 
     private void jTreeDirectoryTreeValueChanged(javax.swing.event.TreeSelectionEvent evt) {//GEN-FIRST:event_jTreeDirectoryTreeValueChanged
-        System.out.println("Create new directory in current virtual disk");
-        if (driveManager == null) {
-            JOptionPane.showMessageDialog(null, "Please first create a virtual drive");
-        } else {
-            DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode) 
-                    this.jTreeDirectoryTree.getLastSelectedPathComponent();
+        DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode) 
+                this.jTreeDirectoryTree.getLastSelectedPathComponent();
 
-            //If selection changed into none
-            if (selectedNode == null) return;
+        //If selection changed into none
+        if (selectedNode == null) return;
 
-            //There's a node selected
-            FileSystemNode nodeInfo = (FileSystemNode)selectedNode.getUserObject();
+        //There's a node selected
+        FileSystemNode nodeInfo = (FileSystemNode)selectedNode.getUserObject();
 
-            this.updateFileContents(nodeInfo);
-        }
+        this.updateFileContents(nodeInfo);
     }//GEN-LAST:event_jTreeDirectoryTreeValueChanged
 
     private void jButtonSaveChangesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonSaveChangesActionPerformed
@@ -793,7 +781,8 @@ public class JFrameMainWindow extends javax.swing.JFrame {
             //Set the model into the table
             this.jTableFileContents.setModel(defaultTableModel);
             
-            //And enable the editing buttons
+            //And enable the editing UI
+            this.jTableFileContents.setEnabled(true);
             this.jButtonSaveChanges.setEnabled(true);
             this.jButtonDiscard.setEnabled(true);
             
@@ -846,7 +835,8 @@ public class JFrameMainWindow extends javax.swing.JFrame {
         
         this.jTableFileContents.setModel(new DefaultTableModel(new Object[0][0], columnNames));
             
-        //And disable the editing buttons
+        //And disable the editing UI
+        this.jTableFileContents.setEnabled(false);
         this.jButtonSaveChanges.setEnabled(false);
         this.jButtonDiscard.setEnabled(false);
     }
@@ -886,8 +876,24 @@ public class JFrameMainWindow extends javax.swing.JFrame {
     }
     
     public void setEnabledDiskDependent(boolean active){
+        
+        //Menu items from File menu
+        this.jMenuItemCreateFile.setEnabled(active);
+        this.jMenuItemCreateDirectory.setEnabled(active);
         this.jMenuItemImport.setEnabled(active);
         this.jMenuItemExport.setEnabled(active);
+        
+        //Menu items from Edit menu
+        this.jMenuItemFind.setEnabled(active);
+        this.jMenuItemCopy.setEnabled(active);
+        this.jMenuItemMove.setEnabled(active);
+        this.jMenuItemRemove.setEnabled(active);
+        
+        //Now the components in the rest of the UI
+        this.jTextFieldCurrentDirectory.setEnabled(active);
+        this.jButtonGoDirectory.setEnabled(active);
+        this.jTableVirtualDriveContents.setEnabled(active);
+        this.jTreeDirectoryTree.setEnabled(active);
     }
     
     //</editor-fold>
