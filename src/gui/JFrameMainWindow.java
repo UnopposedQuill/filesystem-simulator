@@ -603,6 +603,7 @@ public class JFrameMainWindow extends javax.swing.JFrame {
         
         //Remove the node and update the view
         this.driveManager.removeNode(nodeInfo);
+        this.updateDiskContents();
         this.updateTree();
         this.clearFileContents();
         this.clearFileData();
