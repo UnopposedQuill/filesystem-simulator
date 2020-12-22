@@ -8,6 +8,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.regex.PatternSyntaxException;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.JTable;
@@ -411,13 +412,13 @@ public class JFrameMainWindow extends javax.swing.JFrame {
         try{
             //I need to go through each of the three parameters to check for cancelation
             Object fileName = JOptionPane.showInputDialog("Please enter the name for the file", "New File");
-            if (!fileName.equals(JOptionPane.CANCEL_OPTION)) {
+            if (fileName != null && !fileName.equals(JOptionPane.CANCEL_OPTION)) {
 
                 Object fileExtension = JOptionPane.showInputDialog("Please enter the file's extension", "txt");
-                if (!fileExtension.equals(JOptionPane.CANCEL_OPTION)) {
+                if (fileExtension != null && !fileExtension.equals(JOptionPane.CANCEL_OPTION)) {
 
                     Object fileSize = JOptionPane.showInputDialog("Please enter the number of bytes for the file", 32);
-                    if (!fileSize.equals(JOptionPane.CANCEL_OPTION)) {
+                    if (fileSize != null && !fileSize.equals(JOptionPane.CANCEL_OPTION)) {
 
                         //Use the input info to create the file, and check for errors
                         if(driveManager.createFile(Integer.parseInt(fileSize.toString()), fileExtension.toString(), fileName.toString()) != null){
@@ -442,7 +443,7 @@ public class JFrameMainWindow extends javax.swing.JFrame {
         Object name = JOptionPane.showInputDialog("Please enter the directory name", "New Folder");
 
         //Check for cancelation
-        if (!name.equals(JOptionPane.CANCEL_OPTION)){
+        if (name != null && !name.equals(JOptionPane.CANCEL_OPTION)){
 
             //Check for valid name
             if (!name.equals("")) {
@@ -462,29 +463,34 @@ public class JFrameMainWindow extends javax.swing.JFrame {
         
         //First I need to ask for the user for the pattern of search
         Object input = JOptionPane.showInputDialog("Please enter search value");
-        if (!input.equals(JOptionPane.CANCEL_OPTION)) {
+        if (input != null && !input.equals(JOptionPane.CANCEL_OPTION)) {
             
-            ArrayList<FileSystemNode> results = this.driveManager.findFiles(this.driveManager.getRootDirectory(), (String)input);
+            try{
             
-            if (!results.isEmpty()) {
-                Object selectedResult = JOptionPane.showInputDialog(null, "Search completed, please select one of these options, or cancel to dismiss this search", "Search results", JOptionPane.QUESTION_MESSAGE, null, results.toArray(), results.get(0));
-            
-                if (!selectedResult.equals(JOptionPane.CANCEL_OPTION)) {
+                ArrayList<FileSystemNode> results = this.driveManager.findFiles(this.driveManager.getRootDirectory(), (String)input);
 
-                    FileSystemNode selectedNode = (FileSystemNode)selectedResult;
+                if (!results.isEmpty()) {
+                    Object selectedResult = JOptionPane.showInputDialog(null, "Search completed, please select one of these options, or cancel to dismiss this search", "Search results", JOptionPane.QUESTION_MESSAGE, null, results.toArray(), results.get(0));
 
-                    if (selectedNode instanceof FileNode) {
-                        FileNode fileNode = (FileNode) selectedNode;
-                        this.driveManager.changeDirectory(fileNode.getParent().getRoute());
-                    } else {
-                        this.driveManager.changeDirectory(selectedNode.getRoute());
+                    if (selectedResult != null && !selectedResult.equals(JOptionPane.CANCEL_OPTION)) {
+
+                        FileSystemNode selectedNode = (FileSystemNode)selectedResult;
+
+                        if (selectedNode instanceof FileNode) {
+                            FileNode fileNode = (FileNode) selectedNode;
+                            this.driveManager.changeDirectory(fileNode.getParent().getRoute());
+                        } else {
+                            this.driveManager.changeDirectory(selectedNode.getRoute());
+                        }
+
+                        this.updateTree();
+                        this.jTextFieldCurrentDirectory.setText(this.driveManager.getCurrentDirectory().getRoute());
                     }
-
-                    this.updateTree();
-                    this.jTextFieldCurrentDirectory.setText(this.driveManager.getCurrentDirectory().getRoute());
+                } else {
+                    JOptionPane.showMessageDialog(null, "No results found");
                 }
-            } else {
-                JOptionPane.showMessageDialog(null, "No results found");
+            } catch (PatternSyntaxException ex){
+                JOptionPane.showMessageDialog(null, "Please enter a valid search value");
             }
             
         }
@@ -696,7 +702,7 @@ public class JFrameMainWindow extends javax.swing.JFrame {
         
         Object newName = JOptionPane.showInputDialog("Please input the name of the file", nodeInfo.toString());
         
-        if (!newName.equals(JOptionPane.CANCEL_OPTION)) {
+        if (newName != null && !newName.equals(JOptionPane.CANCEL_OPTION)) {
             
             if (this.driveManager.moveElement(nodeInfo, (String) newName)) {
                 this.updateDiskContents();
