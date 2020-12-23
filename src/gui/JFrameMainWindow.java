@@ -190,6 +190,7 @@ public class JFrameMainWindow extends javax.swing.JFrame {
         jToolBar2.setRollover(true);
         jToolBar2.setMaximumSize(new java.awt.Dimension(129, 30));
         jToolBar2.setMinimumSize(new java.awt.Dimension(129, 30));
+        jToolBar2.setPreferredSize(new java.awt.Dimension(246, 25));
 
         jButtonNewVirtualDrive.setText("New Drive");
         jButtonNewVirtualDrive.setFocusable(false);
@@ -229,6 +230,7 @@ public class JFrameMainWindow extends javax.swing.JFrame {
         jToolsPanel.add(jToolBar2);
 
         jToolBar1.setRollover(true);
+        jToolBar1.setPreferredSize(new java.awt.Dimension(93, 25));
 
         jButtonSave.setText("Save");
         jButtonSave.setEnabled(false);
@@ -251,6 +253,7 @@ public class JFrameMainWindow extends javax.swing.JFrame {
         jToolsPanel.add(jToolBar1);
 
         jToolBar3.setRollover(true);
+        jToolBar3.setPreferredSize(new java.awt.Dimension(142, 25));
 
         jButtonImportFile.setText("Import File");
         jButtonImportFile.setEnabled(false);
@@ -434,9 +437,9 @@ public class JFrameMainWindow extends javax.swing.JFrame {
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addComponent(jToolsPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jToolsPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 409, Short.MAX_VALUE)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 409, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabelDiskContents)
@@ -806,8 +809,12 @@ public class JFrameMainWindow extends javax.swing.JFrame {
          */
         try {
             for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Windows".equals(info.getName())) {
+                if ("Nimbus".equals(info.getName())) {
                     javax.swing.UIManager.setLookAndFeel(info.getClassName());
+                    
+                    //Workaround for bug on JToolBar for Nimbus Look and Feel
+                    UIManager.put("ToolBar:Button[Disabled].textForeground", UIManager.getColor("nimbusDisabledText"));
+                    UIManager.put("ToolBar:ToggleButton[Disabled].textForeground", UIManager.getColor("nimbusDisabledText"));
                     break;
                 }
             }
