@@ -109,6 +109,7 @@ public class JFrameMainWindow extends javax.swing.JFrame {
         javax.swing.tree.DefaultMutableTreeNode treeNode1 = new javax.swing.tree.DefaultMutableTreeNode("root");
         jTreeDirectoryTree.setModel(new javax.swing.tree.DefaultTreeModel(treeNode1));
         jTreeDirectoryTree.setEnabled(false);
+        jTreeDirectoryTree.setFocusable(false);
         jTreeDirectoryTree.addTreeSelectionListener(new javax.swing.event.TreeSelectionListener() {
             public void valueChanged(javax.swing.event.TreeSelectionEvent evt) {
                 jTreeDirectoryTreeValueChanged(evt);
@@ -155,6 +156,7 @@ public class JFrameMainWindow extends javax.swing.JFrame {
             }
         ));
         jTableVirtualDriveContents.setEnabled(false);
+        jTableVirtualDriveContents.setFocusable(false);
         jTableVirtualDriveContents.setShowGrid(true);
         jTableVirtualDriveContents.setTableHeader(null);
         //For each column in this Table, I need to reset the renderer
@@ -173,16 +175,22 @@ public class JFrameMainWindow extends javax.swing.JFrame {
         });
 
         jLabelNodeName.setText("<No File Selected>");
+        jLabelNodeName.setFocusable(false);
 
         jLabelFileSize.setText("N/A B");
+        jLabelFileSize.setFocusable(false);
 
         jLabelCreationDate.setText("N/A");
+        jLabelCreationDate.setFocusable(false);
 
         jLabelModificationDate.setText("N/A");
+        jLabelModificationDate.setFocusable(false);
 
         jLabelParentElement.setText("N/A");
+        jLabelParentElement.setFocusable(false);
 
         jLabelDiskContents.setText("Disk Contents");
+        jLabelDiskContents.setFocusable(false);
 
         jToolsPanel.setPreferredSize(new java.awt.Dimension(72, 30));
         jToolsPanel.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT));
@@ -193,7 +201,6 @@ public class JFrameMainWindow extends javax.swing.JFrame {
         jToolBar2.setPreferredSize(new java.awt.Dimension(246, 25));
 
         jButtonNewVirtualDrive.setText("New Drive");
-        jButtonNewVirtualDrive.setFocusable(false);
         jButtonNewVirtualDrive.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         jButtonNewVirtualDrive.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
         jButtonNewVirtualDrive.addActionListener(new java.awt.event.ActionListener() {
@@ -205,7 +212,6 @@ public class JFrameMainWindow extends javax.swing.JFrame {
 
         jButtonMakeDirectory.setText("Make New Directory");
         jButtonMakeDirectory.setEnabled(false);
-        jButtonMakeDirectory.setFocusable(false);
         jButtonMakeDirectory.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         jButtonMakeDirectory.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
         jButtonMakeDirectory.addActionListener(new java.awt.event.ActionListener() {
@@ -217,7 +223,6 @@ public class JFrameMainWindow extends javax.swing.JFrame {
 
         jButtonNewFile.setText("New File");
         jButtonNewFile.setEnabled(false);
-        jButtonNewFile.setFocusable(false);
         jButtonNewFile.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         jButtonNewFile.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
         jButtonNewFile.addActionListener(new java.awt.event.ActionListener() {
@@ -234,6 +239,7 @@ public class JFrameMainWindow extends javax.swing.JFrame {
 
         jButtonSave.setText("Save");
         jButtonSave.setEnabled(false);
+        jButtonSave.setFocusable(true);
         jButtonSave.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jMenuItemSaveChangesActionPerformed(evt);
@@ -243,6 +249,7 @@ public class JFrameMainWindow extends javax.swing.JFrame {
 
         jButtonDiscard.setText("Discard");
         jButtonDiscard.setEnabled(false);
+        jButtonDiscard.setFocusable(true);
         jButtonDiscard.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jMenuItemDiscardActionPerformed(evt);
@@ -257,7 +264,6 @@ public class JFrameMainWindow extends javax.swing.JFrame {
 
         jButtonImportFile.setText("Import File");
         jButtonImportFile.setEnabled(false);
-        jButtonImportFile.setFocusable(false);
         jButtonImportFile.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         jButtonImportFile.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
         jButtonImportFile.addActionListener(new java.awt.event.ActionListener() {
@@ -269,7 +275,6 @@ public class JFrameMainWindow extends javax.swing.JFrame {
 
         jButtonExport.setText("Export File");
         jButtonExport.setEnabled(false);
-        jButtonExport.setFocusable(false);
         jButtonExport.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         jButtonExport.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
         jButtonExport.addActionListener(new java.awt.event.ActionListener() {

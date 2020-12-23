@@ -274,6 +274,7 @@
               <TreeModel code=""/>
             </Property>
             <Property name="enabled" type="boolean" value="false"/>
+            <Property name="focusable" type="boolean" value="false"/>
           </Properties>
           <Events>
             <EventHandler event="valueChanged" listener="javax.swing.event.TreeSelectionListener" parameters="javax.swing.event.TreeSelectionEvent" handler="jTreeDirectoryTreeValueChanged"/>
@@ -451,6 +452,7 @@
               </TableColumnModel>
             </Property>
             <Property name="enabled" type="boolean" value="false"/>
+            <Property name="focusable" type="boolean" value="false"/>
             <Property name="showGrid" type="boolean" value="true"/>
             <Property name="tableHeader" type="javax.swing.table.JTableHeader" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
               <Connection code="null" type="code"/>
@@ -474,31 +476,37 @@
     <Component class="javax.swing.JLabel" name="jLabelNodeName">
       <Properties>
         <Property name="text" type="java.lang.String" value="&lt;No File Selected&gt;"/>
+        <Property name="focusable" type="boolean" value="false"/>
       </Properties>
     </Component>
     <Component class="javax.swing.JLabel" name="jLabelFileSize">
       <Properties>
         <Property name="text" type="java.lang.String" value="N/A B"/>
+        <Property name="focusable" type="boolean" value="false"/>
       </Properties>
     </Component>
     <Component class="javax.swing.JLabel" name="jLabelCreationDate">
       <Properties>
         <Property name="text" type="java.lang.String" value="N/A"/>
+        <Property name="focusable" type="boolean" value="false"/>
       </Properties>
     </Component>
     <Component class="javax.swing.JLabel" name="jLabelModificationDate">
       <Properties>
         <Property name="text" type="java.lang.String" value="N/A"/>
+        <Property name="focusable" type="boolean" value="false"/>
       </Properties>
     </Component>
     <Component class="javax.swing.JLabel" name="jLabelParentElement">
       <Properties>
         <Property name="text" type="java.lang.String" value="N/A"/>
+        <Property name="focusable" type="boolean" value="false"/>
       </Properties>
     </Component>
     <Component class="javax.swing.JLabel" name="jLabelDiskContents">
       <Properties>
         <Property name="text" type="java.lang.String" value="Disk Contents"/>
+        <Property name="focusable" type="boolean" value="false"/>
       </Properties>
     </Component>
     <Container class="javax.swing.JPanel" name="jToolsPanel">
@@ -531,7 +539,6 @@
             <Component class="javax.swing.JButton" name="jButtonNewVirtualDrive">
               <Properties>
                 <Property name="text" type="java.lang.String" value="New Drive"/>
-                <Property name="focusable" type="boolean" value="false"/>
                 <Property name="horizontalTextPosition" type="int" value="0"/>
                 <Property name="verticalTextPosition" type="int" value="3"/>
               </Properties>
@@ -543,7 +550,6 @@
               <Properties>
                 <Property name="text" type="java.lang.String" value="Make New Directory"/>
                 <Property name="enabled" type="boolean" value="false"/>
-                <Property name="focusable" type="boolean" value="false"/>
                 <Property name="horizontalTextPosition" type="int" value="0"/>
                 <Property name="verticalTextPosition" type="int" value="3"/>
               </Properties>
@@ -555,7 +561,6 @@
               <Properties>
                 <Property name="text" type="java.lang.String" value="New File"/>
                 <Property name="enabled" type="boolean" value="false"/>
-                <Property name="focusable" type="boolean" value="false"/>
                 <Property name="horizontalTextPosition" type="int" value="0"/>
                 <Property name="verticalTextPosition" type="int" value="3"/>
               </Properties>
@@ -579,6 +584,7 @@
               <Properties>
                 <Property name="text" type="java.lang.String" value="Save"/>
                 <Property name="enabled" type="boolean" value="false"/>
+                <Property name="focusable" type="boolean" value="true"/>
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jMenuItemSaveChangesActionPerformed"/>
@@ -588,6 +594,7 @@
               <Properties>
                 <Property name="text" type="java.lang.String" value="Discard"/>
                 <Property name="enabled" type="boolean" value="false"/>
+                <Property name="focusable" type="boolean" value="true"/>
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jMenuItemDiscardActionPerformed"/>
@@ -609,7 +616,6 @@
               <Properties>
                 <Property name="text" type="java.lang.String" value="Import File"/>
                 <Property name="enabled" type="boolean" value="false"/>
-                <Property name="focusable" type="boolean" value="false"/>
                 <Property name="horizontalTextPosition" type="int" value="0"/>
                 <Property name="verticalTextPosition" type="int" value="3"/>
               </Properties>
@@ -621,7 +627,6 @@
               <Properties>
                 <Property name="text" type="java.lang.String" value="Export File"/>
                 <Property name="enabled" type="boolean" value="false"/>
-                <Property name="focusable" type="boolean" value="false"/>
                 <Property name="horizontalTextPosition" type="int" value="0"/>
                 <Property name="verticalTextPosition" type="int" value="3"/>
               </Properties>
