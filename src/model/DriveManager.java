@@ -65,7 +65,7 @@ public class DriveManager {
      * This method will take care of inserting a new directory inside the current directory
      * It will check for existing directories before creating
      * @param name The name of the new directory
-     * @return True if the creation was succesful, false otherwise
+     * @return True if the creation was successful, false otherwise
      */
     public boolean makeDirectory(String name){
         //First I need to check if there's a file with that name and extension
@@ -86,7 +86,7 @@ public class DriveManager {
      * will be taken as a absolute, otherwise it will start navigating through
      * the current directory's subcontent
      * @param route The route to which change into
-     * @return A boolean representing the success of the directory change
+     * @return A Boolean representing the success of the directory change
      */
     public boolean changeDirectory(String route){
         //So I can return in case of error

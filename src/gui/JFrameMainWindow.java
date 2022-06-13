@@ -12,6 +12,7 @@ import java.util.regex.PatternSyntaxException;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.JTable;
+import javax.swing.UIManager;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.tree.DefaultMutableTreeNode;
@@ -58,22 +59,32 @@ public class JFrameMainWindow extends javax.swing.JFrame {
         jScrollPane3 = new javax.swing.JScrollPane();
         jTableVirtualDriveContents = new javax.swing.JTable();
         jButtonGoDirectory = new javax.swing.JButton();
-        jButtonSaveChanges = new javax.swing.JButton();
-        jButtonDiscard = new javax.swing.JButton();
         jLabelNodeName = new javax.swing.JLabel();
         jLabelFileSize = new javax.swing.JLabel();
         jLabelCreationDate = new javax.swing.JLabel();
         jLabelModificationDate = new javax.swing.JLabel();
         jLabelParentElement = new javax.swing.JLabel();
-        jLabelFileEditor = new javax.swing.JLabel();
         jLabelDiskContents = new javax.swing.JLabel();
-        jLabelFileSystemTree = new javax.swing.JLabel();
+        jToolsPanel = new javax.swing.JPanel();
+        jToolBar2 = new javax.swing.JToolBar();
+        jButtonNewVirtualDrive = new javax.swing.JButton();
+        jButtonMakeDirectory = new javax.swing.JButton();
+        jButtonNewFile = new javax.swing.JButton();
+        jToolBar1 = new javax.swing.JToolBar();
+        jButtonSave = new javax.swing.JButton();
+        jButtonDiscard = new javax.swing.JButton();
+        jToolBar3 = new javax.swing.JToolBar();
+        jButtonImportFile = new javax.swing.JButton();
+        jButtonExport = new javax.swing.JButton();
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenuFile = new javax.swing.JMenu();
         jMenuItemCreateVirtualDisk = new javax.swing.JMenuItem();
         jSeparator1 = new javax.swing.JPopupMenu.Separator();
         jMenuItemCreateFile = new javax.swing.JMenuItem();
         jMenuItemCreateDirectory = new javax.swing.JMenuItem();
+        jSeparator2 = new javax.swing.JPopupMenu.Separator();
+        jMenuItemSave = new javax.swing.JMenuItem();
+        jMenuItemDiscard = new javax.swing.JMenuItem();
         jSeparator4 = new javax.swing.JPopupMenu.Separator();
         jMenuItemImport = new javax.swing.JMenuItem();
         jMenuItemExport = new javax.swing.JMenuItem();
@@ -98,6 +109,7 @@ public class JFrameMainWindow extends javax.swing.JFrame {
         javax.swing.tree.DefaultMutableTreeNode treeNode1 = new javax.swing.tree.DefaultMutableTreeNode("root");
         jTreeDirectoryTree.setModel(new javax.swing.tree.DefaultTreeModel(treeNode1));
         jTreeDirectoryTree.setEnabled(false);
+        jTreeDirectoryTree.setFocusable(false);
         jTreeDirectoryTree.addTreeSelectionListener(new javax.swing.event.TreeSelectionListener() {
             public void valueChanged(javax.swing.event.TreeSelectionEvent evt) {
                 jTreeDirectoryTreeValueChanged(evt);
@@ -144,6 +156,7 @@ public class JFrameMainWindow extends javax.swing.JFrame {
             }
         ));
         jTableVirtualDriveContents.setEnabled(false);
+        jTableVirtualDriveContents.setFocusable(false);
         jTableVirtualDriveContents.setShowGrid(true);
         jTableVirtualDriveContents.setTableHeader(null);
         //For each column in this Table, I need to reset the renderer
@@ -161,42 +174,117 @@ public class JFrameMainWindow extends javax.swing.JFrame {
             }
         });
 
-        jButtonSaveChanges.setText("Save");
-        jButtonSaveChanges.setEnabled(false);
-        jButtonSaveChanges.addActionListener(new java.awt.event.ActionListener() {
+        jLabelNodeName.setText("<No File Selected>");
+        jLabelNodeName.setFocusable(false);
+
+        jLabelFileSize.setText("N/A B");
+        jLabelFileSize.setFocusable(false);
+
+        jLabelCreationDate.setText("N/A");
+        jLabelCreationDate.setFocusable(false);
+
+        jLabelModificationDate.setText("N/A");
+        jLabelModificationDate.setFocusable(false);
+
+        jLabelParentElement.setText("N/A");
+        jLabelParentElement.setFocusable(false);
+
+        jLabelDiskContents.setText("Disk Contents");
+        jLabelDiskContents.setFocusable(false);
+
+        jToolsPanel.setPreferredSize(new java.awt.Dimension(72, 30));
+        jToolsPanel.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT));
+
+        jToolBar2.setRollover(true);
+        jToolBar2.setMaximumSize(new java.awt.Dimension(129, 30));
+        jToolBar2.setMinimumSize(new java.awt.Dimension(129, 30));
+        jToolBar2.setPreferredSize(new java.awt.Dimension(246, 25));
+
+        jButtonNewVirtualDrive.setText("New Drive");
+        jButtonNewVirtualDrive.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        jButtonNewVirtualDrive.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        jButtonNewVirtualDrive.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButtonSaveChangesActionPerformed(evt);
+                jMenuItemCreateVirtualDiskActionPerformed(evt);
             }
         });
+        jToolBar2.add(jButtonNewVirtualDrive);
+
+        jButtonMakeDirectory.setText("Make New Directory");
+        jButtonMakeDirectory.setEnabled(false);
+        jButtonMakeDirectory.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        jButtonMakeDirectory.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        jButtonMakeDirectory.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItemCreateDirectoryActionPerformed(evt);
+            }
+        });
+        jToolBar2.add(jButtonMakeDirectory);
+
+        jButtonNewFile.setText("New File");
+        jButtonNewFile.setEnabled(false);
+        jButtonNewFile.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        jButtonNewFile.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        jButtonNewFile.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItemCreateFileActionPerformed(evt);
+            }
+        });
+        jToolBar2.add(jButtonNewFile);
+
+        jToolsPanel.add(jToolBar2);
+
+        jToolBar1.setRollover(true);
+        jToolBar1.setPreferredSize(new java.awt.Dimension(93, 25));
+
+        jButtonSave.setText("Save");
+        jButtonSave.setEnabled(false);
+        jButtonSave.setFocusable(true);
+        jButtonSave.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItemSaveChangesActionPerformed(evt);
+            }
+        });
+        jToolBar1.add(jButtonSave);
 
         jButtonDiscard.setText("Discard");
         jButtonDiscard.setEnabled(false);
+        jButtonDiscard.setFocusable(true);
         jButtonDiscard.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButtonDiscardActionPerformed(evt);
+                jMenuItemDiscardActionPerformed(evt);
             }
         });
+        jToolBar1.add(jButtonDiscard);
 
-        jLabelNodeName.setHorizontalAlignment(javax.swing.SwingConstants.TRAILING);
-        jLabelNodeName.setText("<No File Selected>");
+        jToolsPanel.add(jToolBar1);
 
-        jLabelFileSize.setHorizontalAlignment(javax.swing.SwingConstants.TRAILING);
-        jLabelFileSize.setText("N/A B");
+        jToolBar3.setRollover(true);
+        jToolBar3.setPreferredSize(new java.awt.Dimension(142, 25));
 
-        jLabelCreationDate.setHorizontalAlignment(javax.swing.SwingConstants.TRAILING);
-        jLabelCreationDate.setText("N/A");
+        jButtonImportFile.setText("Import File");
+        jButtonImportFile.setEnabled(false);
+        jButtonImportFile.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        jButtonImportFile.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        jButtonImportFile.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItemImportActionPerformed(evt);
+            }
+        });
+        jToolBar3.add(jButtonImportFile);
 
-        jLabelModificationDate.setHorizontalAlignment(javax.swing.SwingConstants.TRAILING);
-        jLabelModificationDate.setText("N/A");
+        jButtonExport.setText("Export File");
+        jButtonExport.setEnabled(false);
+        jButtonExport.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        jButtonExport.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        jButtonExport.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItemExportActionPerformed(evt);
+            }
+        });
+        jToolBar3.add(jButtonExport);
 
-        jLabelParentElement.setHorizontalAlignment(javax.swing.SwingConstants.TRAILING);
-        jLabelParentElement.setText("N/A");
-
-        jLabelFileEditor.setText("File Editor");
-
-        jLabelDiskContents.setText("Disk Contents");
-
-        jLabelFileSystemTree.setText("File Explorer");
+        jToolsPanel.add(jToolBar3);
 
         jMenuFile.setText("File");
 
@@ -229,6 +317,27 @@ public class JFrameMainWindow extends javax.swing.JFrame {
             }
         });
         jMenuFile.add(jMenuItemCreateDirectory);
+        jMenuFile.add(jSeparator2);
+
+        jMenuItemSave.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_S, java.awt.event.InputEvent.CTRL_DOWN_MASK));
+        jMenuItemSave.setText("Save Changes");
+        jMenuItemSave.setEnabled(false);
+        jMenuItemSave.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItemSaveChangesActionPerformed(evt);
+            }
+        });
+        jMenuFile.add(jMenuItemSave);
+
+        jMenuItemDiscard.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_D, java.awt.event.InputEvent.CTRL_DOWN_MASK));
+        jMenuItemDiscard.setText("Discard Changes");
+        jMenuItemDiscard.setEnabled(false);
+        jMenuItemDiscard.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItemDiscardActionPerformed(evt);
+            }
+        });
+        jMenuFile.add(jMenuItemDiscard);
         jMenuFile.add(jSeparator4);
 
         jMenuItemImport.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_I, java.awt.event.InputEvent.CTRL_DOWN_MASK));
@@ -304,77 +413,57 @@ public class JFrameMainWindow extends javax.swing.JFrame {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(jToolsPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 1100, Short.MAX_VALUE)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jScrollPane2)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(jTextFieldCurrentDirectory)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jButtonGoDirectory))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 511, Short.MAX_VALUE)
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(jLabelDiskContents, javax.swing.GroupLayout.PREFERRED_SIZE, 101, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(0, 0, Short.MAX_VALUE)))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 478, Short.MAX_VALUE)
                         .addGap(18, 18, 18)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabelFileSystemTree, javax.swing.GroupLayout.PREFERRED_SIZE, 72, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 524, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(18, 18, 18)
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 386, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                 .addComponent(jLabelCreationDate, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                    .addComponent(jLabelModificationDate, javax.swing.GroupLayout.DEFAULT_SIZE, 200, Short.MAX_VALUE)
-                                    .addComponent(jLabelParentElement, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                                    .addComponent(jLabelModificationDate, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                    .addComponent(jLabelParentElement, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)))
                             .addComponent(jLabelNodeName, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                                    .addComponent(jButtonSaveChanges)
-                                    .addGap(18, 18, 18)
-                                    .addComponent(jButtonDiscard))
-                                .addComponent(jLabelFileSize, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                        .addGap(6, 6, 6))
+                            .addComponent(jLabelFileSize, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)))
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(jLabelFileEditor)
-                        .addGap(0, 0, Short.MAX_VALUE)))
+                        .addComponent(jLabelDiskContents, javax.swing.GroupLayout.PREFERRED_SIZE, 101, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(395, 395, 395)
+                        .addComponent(jTextFieldCurrentDirectory)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jButtonGoDirectory)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
+                .addComponent(jToolsPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 409, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabelDiskContents)
                     .addComponent(jTextFieldCurrentDirectory, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jButtonGoDirectory))
-                .addGap(18, 18, 18)
-                .addComponent(jLabelFileEditor)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 375, Short.MAX_VALUE)
-                .addGap(18, 18, 18)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabelNodeName)
-                    .addComponent(jLabelDiskContents)
-                    .addComponent(jLabelFileSystemTree))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addGroup(layout.createSequentialGroup()
+                        .addComponent(jLabelNodeName)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jLabelFileSize)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jLabelCreationDate)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jLabelModificationDate)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jLabelParentElement)
-                        .addGap(31, 31, 31)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jButtonSaveChanges)
-                            .addComponent(jButtonDiscard)))
-                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 387, Short.MAX_VALUE)
-                        .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)))
+                        .addComponent(jLabelParentElement))
+                    .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 379, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap())
         );
 
@@ -529,71 +618,6 @@ public class JFrameMainWindow extends javax.swing.JFrame {
         this.updateFileContents(nodeInfo);
     }//GEN-LAST:event_jTreeDirectoryTreeValueChanged
 
-    private void jButtonSaveChangesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonSaveChangesActionPerformed
-        DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode) 
-                this.jTreeDirectoryTree.getLastSelectedPathComponent();
-
-        //Selected node shouldn't have changed to null
-        if (selectedNode == null) return;
-
-        //There's a node selected
-        FileSystemNode nodeInfo = (FileSystemNode)selectedNode.getUserObject();
-
-        //I'm adding this if to prevent any awful errors
-        if (nodeInfo instanceof FileNode) {
-            try{
-                FileNode fileNode = (FileNode) nodeInfo;
-                char[] data = new char[fileNode.getSize()];
-
-                //For each byte in the file
-                for (int i = 0; i < fileNode.getSize(); i++) {
-                    
-                    //First get the cell value, then parse it to an int, the to a char
-                    Object originalCellValue = this.jTableFileContents.getModel().getValueAt(i/this.fileEditorColumnCount, i%this.fileEditorColumnCount);
-                    
-                    //This is for edited cells
-                    if (originalCellValue instanceof String) {
-                        int integerCellValue = Integer.parseInt((String)originalCellValue);
-                        data[i] = (char)integerCellValue;
-                    } else if (originalCellValue instanceof Integer){
-                        int integerCellValue = (int)originalCellValue;
-                        data[i] = (char)integerCellValue;
-                    } else {
-                        //Undefined type
-                        data[i] = 0;
-                    }
-                }
-
-                this.driveManager.saveData(fileNode, data);
-                this.updateFileContents(nodeInfo);
-                this.updateDiskContents();
-
-                //Add a confirmation message
-                JOptionPane.showMessageDialog(null, "Contents Saved");
-            } catch (ClassCastException ex){
-                JOptionPane.showMessageDialog(null, "Incompatible data in editor");
-                java.util.logging.Logger.getLogger(JFrameMainWindow.class.getName()).log(java.util.logging.Level.SEVERE, "Incompatible data in editor", ex);
-            } catch (NumberFormatException ex){
-                JOptionPane.showMessageDialog(null, "Couldn't parse numbers in editor");
-                java.util.logging.Logger.getLogger(JFrameMainWindow.class.getName()).log(java.util.logging.Level.SEVERE, "Couldn't parse numbers in editor", ex);
-            }
-        }
-    }//GEN-LAST:event_jButtonSaveChangesActionPerformed
-
-    private void jButtonDiscardActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonDiscardActionPerformed
-        //Redraw using the previous selected node
-        DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode) 
-                this.jTreeDirectoryTree.getLastSelectedPathComponent();
-
-        //Selected node shouldn't have changed to null
-        if (selectedNode == null) return;
-
-        //There's a node selected
-        FileSystemNode nodeInfo = (FileSystemNode)selectedNode.getUserObject();
-
-        this.updateFileContents(nodeInfo);
-    }//GEN-LAST:event_jButtonDiscardActionPerformed
-
     private void jMenuItemRemoveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItemRemoveActionPerformed
         DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode) 
                 this.jTreeDirectoryTree.getLastSelectedPathComponent();
@@ -713,6 +737,70 @@ public class JFrameMainWindow extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_jMenuItemMoveActionPerformed
 
+    private void jMenuItemSaveChangesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItemSaveChangesActionPerformed
+        DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode) 
+                this.jTreeDirectoryTree.getLastSelectedPathComponent();
+
+        //Selected node shouldn't have changed to null
+        if (selectedNode == null) return;
+
+        //There's a node selected
+        FileSystemNode nodeInfo = (FileSystemNode)selectedNode.getUserObject();
+
+        //I'm adding this if to prevent any awful errors
+        if (nodeInfo instanceof FileNode) {
+            try{
+                FileNode fileNode = (FileNode) nodeInfo;
+                char[] data = new char[fileNode.getSize()];
+
+                //For each byte in the file
+                for (int i = 0; i < fileNode.getSize(); i++) {
+                    
+                    //First get the cell value, then parse it to an int, the to a char
+                    Object originalCellValue = this.jTableFileContents.getModel().getValueAt(i/this.fileEditorColumnCount, i%this.fileEditorColumnCount);
+                    
+                    //This is for edited cells
+                    if (originalCellValue instanceof String) {
+                        int integerCellValue = Integer.parseInt((String)originalCellValue);
+                        data[i] = (char)integerCellValue;
+                    } else if (originalCellValue instanceof Integer){
+                        int integerCellValue = (int)originalCellValue;
+                        data[i] = (char)integerCellValue;
+                    } else {
+                        //Undefined type
+                        data[i] = 0;
+                    }
+                }
+
+                this.driveManager.saveData(fileNode, data);
+                this.updateFileContents(nodeInfo);
+                this.updateDiskContents();
+
+                //Add a confirmation message
+                JOptionPane.showMessageDialog(null, "Contents Saved");
+            } catch (ClassCastException ex){
+                JOptionPane.showMessageDialog(null, "Incompatible data in editor");
+                java.util.logging.Logger.getLogger(JFrameMainWindow.class.getName()).log(java.util.logging.Level.SEVERE, "Incompatible data in editor", ex);
+            } catch (NumberFormatException ex){
+                JOptionPane.showMessageDialog(null, "Couldn't parse numbers in editor");
+                java.util.logging.Logger.getLogger(JFrameMainWindow.class.getName()).log(java.util.logging.Level.SEVERE, "Couldn't parse numbers in editor", ex);
+            }
+        }
+    }//GEN-LAST:event_jMenuItemSaveChangesActionPerformed
+
+    private void jMenuItemDiscardActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItemDiscardActionPerformed
+        DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode) 
+                this.jTreeDirectoryTree.getLastSelectedPathComponent();
+
+        //If selection changed into none
+        if (selectedNode == null) return;
+
+        //There's a node selected
+        FileSystemNode nodeInfo = (FileSystemNode)selectedNode.getUserObject();
+
+        this.updateFileContents(nodeInfo);
+    }//GEN-LAST:event_jMenuItemDiscardActionPerformed
+
     //</editor-fold>
     
     /**
@@ -728,6 +816,10 @@ public class JFrameMainWindow extends javax.swing.JFrame {
             for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
                 if ("Nimbus".equals(info.getName())) {
                     javax.swing.UIManager.setLookAndFeel(info.getClassName());
+                    
+                    //Workaround for bug on JToolBar for Nimbus Look and Feel
+                    UIManager.put("ToolBar:Button[Disabled].textForeground", UIManager.getColor("nimbusDisabledText"));
+                    UIManager.put("ToolBar:ToggleButton[Disabled].textForeground", UIManager.getColor("nimbusDisabledText"));
                     break;
                 }
             }
@@ -744,13 +836,16 @@ public class JFrameMainWindow extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButtonDiscard;
+    private javax.swing.JButton jButtonExport;
     private javax.swing.JButton jButtonGoDirectory;
-    private javax.swing.JButton jButtonSaveChanges;
+    private javax.swing.JButton jButtonImportFile;
+    private javax.swing.JButton jButtonMakeDirectory;
+    private javax.swing.JButton jButtonNewFile;
+    private javax.swing.JButton jButtonNewVirtualDrive;
+    private javax.swing.JButton jButtonSave;
     private javax.swing.JLabel jLabelCreationDate;
     private javax.swing.JLabel jLabelDiskContents;
-    private javax.swing.JLabel jLabelFileEditor;
     private javax.swing.JLabel jLabelFileSize;
-    private javax.swing.JLabel jLabelFileSystemTree;
     private javax.swing.JLabel jLabelModificationDate;
     private javax.swing.JLabel jLabelNodeName;
     private javax.swing.JLabel jLabelParentElement;
@@ -761,20 +856,27 @@ public class JFrameMainWindow extends javax.swing.JFrame {
     private javax.swing.JMenuItem jMenuItemCreateDirectory;
     private javax.swing.JMenuItem jMenuItemCreateFile;
     private javax.swing.JMenuItem jMenuItemCreateVirtualDisk;
+    private javax.swing.JMenuItem jMenuItemDiscard;
     private javax.swing.JMenuItem jMenuItemExport;
     private javax.swing.JMenuItem jMenuItemFind;
     private javax.swing.JMenuItem jMenuItemImport;
     private javax.swing.JMenuItem jMenuItemMove;
     private javax.swing.JMenuItem jMenuItemRemove;
+    private javax.swing.JMenuItem jMenuItemSave;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JPopupMenu.Separator jSeparator1;
+    private javax.swing.JPopupMenu.Separator jSeparator2;
     private javax.swing.JPopupMenu.Separator jSeparator3;
     private javax.swing.JPopupMenu.Separator jSeparator4;
     private javax.swing.JTable jTableFileContents;
     private javax.swing.JTable jTableVirtualDriveContents;
     private javax.swing.JTextField jTextFieldCurrentDirectory;
+    private javax.swing.JToolBar jToolBar1;
+    private javax.swing.JToolBar jToolBar2;
+    private javax.swing.JToolBar jToolBar3;
+    private javax.swing.JPanel jToolsPanel;
     private javax.swing.JTree jTreeDirectoryTree;
     // End of variables declaration//GEN-END:variables
 
@@ -881,7 +983,7 @@ public class JFrameMainWindow extends javax.swing.JFrame {
         //And name
         if (fileSystemNode instanceof FileNode) {
             FileNode fileNode = (FileNode) fileSystemNode;
-            this.jLabelNodeName.setText("File: " + fileNode.getName());
+            this.jLabelNodeName.setText("File: " + fileNode.toString());
             
             //Need to split the file information into the column count
             char [] contents = this.driveManager.getData(fileNode);
@@ -906,9 +1008,13 @@ public class JFrameMainWindow extends javax.swing.JFrame {
             
             //And enable the editing UI
             this.jTableFileContents.setEnabled(true);
-            this.jButtonSaveChanges.setEnabled(true);
+            this.jButtonSave.setEnabled(true);
             this.jButtonDiscard.setEnabled(true);
+            this.jButtonExport.setEnabled(true);
+            
             this.jMenuItemExport.setEnabled(true);
+            this.jMenuItemSave.setEnabled(true);
+            this.jMenuItemDiscard.setEnabled(true);
             
         } else if (fileSystemNode instanceof DirectoryNode) {
             DirectoryNode directoryNode = (DirectoryNode) fileSystemNode;
@@ -961,9 +1067,13 @@ public class JFrameMainWindow extends javax.swing.JFrame {
             
         //And disable the editing UI
         this.jTableFileContents.setEnabled(false);
-        this.jButtonSaveChanges.setEnabled(false);
-        this.jButtonDiscard.setEnabled(false);
         this.jMenuItemExport.setEnabled(false);
+        this.jMenuItemSave.setEnabled(false);
+        this.jMenuItemDiscard.setEnabled(false);
+        
+        this.jButtonSave.setEnabled(false);
+        this.jButtonDiscard.setEnabled(false);
+        this.jButtonExport.setEnabled(false);
     }
     
     private void clearFileData(){
@@ -986,6 +1096,11 @@ public class JFrameMainWindow extends javax.swing.JFrame {
         this.jMenuItemCopy.setEnabled(active);
         this.jMenuItemMove.setEnabled(active);
         this.jMenuItemRemove.setEnabled(active);
+        
+        //Items from the ToolBar
+        this.jButtonMakeDirectory.setEnabled(active);
+        this.jButtonNewFile.setEnabled(active);
+        this.jButtonImportFile.setEnabled(active);
         
         //Now the components in the rest of the UI
         this.jTextFieldCurrentDirectory.setEnabled(active);
